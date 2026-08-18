@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asbestos Threshold &amp; Disposal Guide — Kustom Ventura Division</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* surfaces — stepped so layers read distinctly */
+    --bg:#0b0f14;
+    --surface-1:#131a22;
+    --surface-2:#1a232d;
+    --surface-3:#222d39;
+    --line:#2e3b49;
+    --line-bright:#3d4d5e;
+
+    /* text — all checked for contrast on dark surfaces */
+    --text:#eef3f8;
+    --text-2:#b8c6d4;
+    --text-3:#8698a9;
+
+    /* status — bright variants for dark bg legibility */
+    --ok:#3ddc84;
+    --ok-dim:#12301f;
+    --ok-line:#1f6b40;
+    --warn:#ffb340;
+    --warn-dim:#33240a;
+    --warn-line:#8a6114;
+    --alert:#ff6b5a;
+    --alert-dim:#33150f;
+    --alert-line:#8a3226;
+
+    --accent:#4dd4f7;
+    --accent-dim:#0d2a33;
+
+    --r:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:70px;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--accent);color:#04141a}
+
+  /* ---------- ambient glow ---------- */
+  .glow{
+    position:fixed;top:-220px;left:50%;transform:translateX(-50%);
+    width:900px;height:520px;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse at center, rgba(77,212,247,.11), transparent 68%);
+    filter:blur(28px);
+  }
+
+  /* ---------- header ---------- */
+  header{
+    position:relative;z-index:1;
+    padding:52px 24px 44px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, var(--surface-1) 0%, var(--bg) 100%);
+  }
+  .wrap{max-width:1060px;margin:0 auto}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--accent);font-weight:600;margin-bottom:16px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{
+    content:"";width:7px;height:7px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 12px var(--accent);animation:pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  header h1{
+    font-size:clamp(30px,5.4vw,50px);font-weight:700;letter-spacing:-.025em;
+    line-height:1.06;max-width:17ch;color:var(--text);
+  }
+  header h1 em{font-style:normal;color:var(--accent)}
+  header .sub{margin-top:18px;max-width:58ch;color:var(--text-2);font-size:15.5px}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:26px}
+  .badge{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.08em;
+    text-transform:uppercase;font-weight:500;
+    padding:7px 12px;border-radius:7px;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--text-2);
+  }
+
+  /* ---------- layout ---------- */
+  main{max-width:1060px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+  section{margin-top:56px}
+  .sec-label{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--text-3);font-weight:600;
+    display:flex;align-items:center;gap:11px;margin-bottom:10px;
+  }
+  .sec-label::before{content:"";width:22px;height:1px;background:var(--accent)}
+  h2{font-size:27px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px;color:var(--text)}
+  .sec-sub{color:var(--text-2);font-size:15px;max-width:66ch;margin-bottom:24px}
+
+  /* ---------- gate ---------- */
+  .gate{
+    background:var(--surface-1);border:1px solid var(--line);
+    border-left:3px solid var(--accent);
+    border-radius:var(--r);padding:26px 28px;
+    display:flex;gap:22px;align-items:flex-start;
+  }
+  .gate .mark{
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:19px;
+    color:var(--accent);white-space:nowrap;padding-top:2px;
+    text-shadow:0 0 22px rgba(77,212,247,.45);
+  }
+  .gate p{color:var(--text-2);font-size:15px}
+  .gate strong{color:var(--text);font-weight:600}
+
+  /* ---------- tool ---------- */
+  .tool{
+    background:var(--surface-1);border:1px solid var(--line);
+    border-radius:var(--r);overflow:hidden;
+  }
+  .tool-pad{padding:26px}
+  .controls{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){.controls{grid-template-columns:1fr}}
+  .ctrl{
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:12px;padding:18px;
+  }
+  .ctrl .n{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:6px;
+  }
+  .ctrl .q{font-size:14.5px;font-weight:600;color:var(--text);margin-bottom:15px}
+  .seg{display:flex;flex-direction:column;gap:9px}
+  .seg button{
+    font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
+    text-align:left;padding:13px 15px;border-radius:10px;cursor:pointer;
+    border:1px solid var(--line-bright);
+    background:var(--surface-3);color:var(--text-2);
+    transition:transform .16s cubic-bezier(.2,.8,.3,1), background .16s ease, border-color .16s ease, color .16s ease;
+  }
+  .seg button:hover{border-color:var(--accent);color:var(--text);transform:translateY(-1px)}
+  .seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .seg button[aria-pressed="true"]{
+    background:var(--accent);border-color:var(--accent);color:#04141a;
+    box-shadow:0 0 22px rgba(77,212,247,.28);
+  }
+  .seg .tag{
+    display:block;font-family:'JetBrains Mono',monospace;font-size:10.5px;
+    font-weight:500;color:var(--text-3);margin-top:3px;letter-spacing:.02em;
+  }
+  .seg button[aria-pressed="true"] .tag{color:#0a3d4d}
+
+  /* ---------- readout ---------- */
+  .readout{border-top:1px solid var(--line);background:var(--bg);padding:26px}
+  .verdict{
+    border-radius:12px;padding:24px;border:1px solid var(--line);
+    background:var(--surface-2);
+    transition:background .3s ease, border-color .3s ease;
+  }
+  .verdict.ok{background:var(--ok-dim);border-color:var(--ok-line)}
+  .verdict.warn{background:var(--warn-dim);border-color:var(--warn-line)}
+  .verdict.alert{background:var(--alert-dim);border-color:var(--alert-line)}
+  .v-top{display:flex;align-items:center;gap:13px;flex-wrap:wrap;margin-bottom:8px}
+  .chip{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+    letter-spacing:.12em;text-transform:uppercase;
+    padding:6px 11px;border-radius:6px;color:#04141a;
+  }
+  .chip.ok{background:var(--ok)}
+  .chip.warn{background:var(--warn)}
+  .chip.alert{background:var(--alert)}
+  .verdict h3{font-size:21px;font-weight:700;letter-spacing:-.015em;color:var(--text)}
+  .v-lede{font-size:15px;color:var(--text-2);margin-top:4px}
+  .rows{margin-top:20px;display:grid;gap:14px}
+  .row{
+    display:flex;gap:16px;align-items:flex-start;font-size:14.5px;
+    padding-top:14px;border-top:1px solid var(--line);
+  }
+  .row:first-child{padding-top:0;border-top:none}
+  .row .k{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--text-3);font-weight:600;
+    min-width:118px;padding-top:3px;flex-shrink:0;
+  }
+  .row .v{flex:1;color:var(--text-2)}
+  .row .v strong{color:var(--text);font-weight:600}
+
+  /* ---------- tabs ---------- */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+  .tabs button{
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+    letter-spacing:.06em;padding:11px 17px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--line);background:var(--surface-1);color:var(--text-3);
+    transition:all .18s ease;
+  }
+  .tabs button:hover{color:var(--text);border-color:var(--line-bright)}
+  .tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .tabs button[aria-selected="true"]{
+    background:var(--surface-3);color:var(--accent);border-color:var(--accent);
+  }
+  .district{
+    background:var(--surface-1);border:1px solid var(--line);
+    border-radius:var(--r);padding:28px;
+    animation:slidein .34s cubic-bezier(.2,.8,.3,1);
+  }
+  @keyframes slidein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .district[hidden]{display:none}
+  .d-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+  .district h3{font-size:22px;font-weight:700;letter-spacing:-.015em;color:var(--text)}
+  .d-rule{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    letter-spacing:.1em;color:var(--warn);
+    background:var(--warn-dim);border:1px solid var(--warn-line);
+    padding:5px 11px;border-radius:6px;
+  }
+  .d-cities{color:var(--text-3);font-size:13.5px;margin:8px 0 22px}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:640px){.facts{grid-template-columns:1fr}}
+  .fact{
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:11px;padding:17px 18px;
+    transition:border-color .18s ease, transform .18s ease;
+  }
+  .fact:hover{border-color:var(--line-bright);transform:translateY(-2px)}
+  .fact .lbl{
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--text-3);font-weight:600;margin-bottom:8px;
+  }
+  .fact .big{
+    display:block;font-family:'JetBrains Mono',monospace;font-size:25px;
+    font-weight:700;color:var(--accent);letter-spacing:-.02em;margin-bottom:3px;
+  }
+  .fact .txt{font-size:13.5px;color:var(--text-2)}
+  .d-link{
+    display:inline-flex;align-items:center;gap:8px;margin-top:22px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+    color:var(--accent);text-decoration:none;
+    padding:10px 15px;border-radius:8px;
+    background:var(--accent-dim);border:1px solid var(--line-bright);
+    transition:all .18s ease;
+  }
+  .d-link:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .d-link::after{content:"↗";font-size:13px}
+
+  /* ---------- friable ---------- */
+  .fr{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.fr{grid-template-columns:1fr}}
+  .fr-card{
+    background:var(--surface-1);border:1px solid var(--line);
+    border-radius:var(--r);overflow:hidden;
+  }
+  .fr-card .cap{
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;
+    letter-spacing:.14em;padding:15px 20px;
+  }
+  .fr-card.a .cap{background:var(--alert-dim);color:var(--alert);border-bottom:1px solid var(--alert-line)}
+  .fr-card.b .cap{background:var(--surface-3);color:var(--text-2);border-bottom:1px solid var(--line)}
+  .fr-card .body{padding:20px}
+  .fr-card .desc{font-size:14px;color:var(--text-2);margin-bottom:16px}
+  .fr-card ul{list-style:none;display:grid;gap:11px}
+  .fr-card li{
+    font-size:13.5px;color:var(--text-2);padding-left:20px;position:relative;
+  }
+  .fr-card li::before{
+    content:"";position:absolute;left:2px;top:8px;
+    width:6px;height:6px;border-radius:50%;background:var(--accent);
+  }
+  .flip{
+    background:var(--alert-dim);border:1px solid var(--alert-line);
+    border-radius:12px;padding:20px 22px;margin-top:18px;
+    font-size:14.5px;color:var(--text-2);
+  }
+  .flip strong{color:var(--alert);font-weight:700}
+
+  /* ---------- disposal ---------- */
+  .disp{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.disp{grid-template-columns:1fr}}
+  .dcard{
+    background:var(--surface-1);border:1px solid var(--line);
+    border-radius:var(--r);padding:24px;
+  }
+  .dcard.reg{border-top:3px solid var(--alert)}
+  .dcard.free{border-top:3px solid var(--ok)}
+  .dcard h4{font-size:18px;font-weight:700;letter-spacing:-.015em;margin-bottom:6px;color:var(--text)}
+  .dcard .trig{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+    letter-spacing:.08em;margin-bottom:18px;
+  }
+  .dcard.reg .trig{color:var(--alert)}
+  .dcard.free .trig{color:var(--ok)}
+  .dcard ol{list-style:none;counter-reset:s;display:grid;gap:12px}
+  .dcard li{
+    counter-increment:s;font-size:14px;color:var(--text-2);
+    padding-left:30px;position:relative;
+  }
+  .dcard li::before{
+    content:counter(s);position:absolute;left:0;top:1px;
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+    width:19px;height:19px;border-radius:5px;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--surface-3);color:var(--text-3);border:1px solid var(--line);
+  }
+  .dcard li strong{color:var(--text);font-weight:700}
+
+  .flag{
+    background:var(--warn-dim);border:1px solid var(--warn-line);
+    border-radius:12px;padding:20px 22px;margin-top:18px;
+    display:flex;gap:16px;align-items:flex-start;
+  }
+  .flag .ic{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    letter-spacing:.1em;color:var(--warn);white-space:nowrap;padding-top:1px;
+  }
+  .flag p{font-size:14.5px;color:var(--text-2)}
+  .flag strong{color:var(--warn);font-weight:700}
+
+  footer{
+    max-width:1060px;margin:64px auto 0;padding:28px 24px;
+    border-top:1px solid var(--line);
+  }
+  footer p{
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;
+    line-height:1.9;color:var(--text-3);
+  }
+  footer .src{color:var(--text-2)}
+
+  .rise{opacity:0;transform:translateY(18px);animation:rise .62s cubic-bezier(.2,.8,.3,1) forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){
+    .rise,.district{animation:none;opacity:1;transform:none}
+    .eyebrow::before{animation:none}
+    *{transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<header>
+  <div class="wrap">
+    <div class="eyebrow">Field Reference · Asbestos &amp; Lead</div>
+    <h1>Threshold &amp; <em>Disposal</em> Decision Guide</h1>
+    <p class="sub">Set the three variables that decide every job — content, area, friability — and read exactly what kicks in, from notification through the landfill gate.</p>
+    <div class="badge-row">
+      <span class="badge">Kustom Ventura Division</span>
+      <span class="badge">SCAQMD · AVAQMD · VCAPCD</span>
+      <span class="badge">PM / Superintendent</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="rise">
+    <div class="sec-label">Start here</div>
+    <h2>The 1% gate controls everything</h2>
+    <p class="sec-sub">Nothing else matters until you clear this. Every threshold below only activates once the material is over the line.</p>
+    <div class="gate">
+      <span class="mark">&gt; 1%</span>
+      <p>Material is <strong>regulated asbestos-containing material (ACM)</strong> only when it tests <strong>greater than 1% asbestos</strong>. At or below 1% it is <strong>not regulated ACM</strong> — the friable question and the 100 ft² question trigger nothing, and the waste is not regulated asbestos waste. Cal/OSHA work practices can still be directed by your IH regardless of content.</p>
+    </div>
+  </section>
+
+  <section class="rise" style="animation-delay:.07s">
+    <div class="sec-label">Interactive</div>
+    <h2>Set the job, read the path</h2>
+    <p class="sec-sub">Tap each variable. The readout updates live.</p>
+
+    <div class="tool">
+      <div class="tool-pad">
+        <div class="controls">
+          <div class="ctrl">
+            <div class="n">Variable 01</div>
+            <div class="q">Asbestos content</div>
+            <div class="seg" data-group="content">
+              <button data-val="under" aria-pressed="true">≤ 1%<span class="tag">None detected / trace</span></button>
+              <button data-val="over" aria-pressed="false">&gt; 1%<span class="tag">Regulated ACM</span></button>
+            </div>
+          </div>
+          <div class="ctrl">
+            <div class="n">Variable 02</div>
+            <div class="q">Quantity disturbed</div>
+            <div class="seg" data-group="area">
+              <button data-val="small" aria-pressed="true">&lt; 100 ft²<span class="tag">or &lt; 100 linear ft</span></button>
+              <button data-val="large" aria-pressed="false">≥ 100 ft²<span class="tag">or ≥ 100 linear ft</span></button>
+            </div>
+          </div>
+          <div class="ctrl">
+            <div class="n">Variable 03</div>
+            <div class="q">Friability</div>
+            <div class="seg" data-group="friable">
+              <button data-val="friable" aria-pressed="true">Friable<span class="tag">Crumbles by hand</span></button>
+              <button data-val="non" aria-pressed="false">Non-friable<span class="tag">Intact / bonded</span></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="readout">
+        <div class="verdict ok" id="verdict" aria-live="polite">
+          <div class="v-top">
+            <span class="chip ok" id="chip">Not regulated</span>
+            <h3 id="vTitle">Non-regulated debris</h3>
+          </div>
+          <p class="v-lede" id="vLede"></p>
+          <div class="rows" id="vRows"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rise" style="animation-delay:.14s">
+    <div class="sec-label">By air district</div>
+    <h2>Where you work</h2>
+    <p class="sec-sub">The 1% and 100 ft² logic is consistent across all three. What changes is the form and who you file with.</p>
+
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-tab="scaqmd">SCAQMD</button>
+      <button role="tab" aria-selected="false" data-tab="avaqmd">ANTELOPE VALLEY</button>
+      <button role="tab" aria-selected="false" data-tab="vcapcd">VENTURA COUNTY</button>
+    </div>
+
+    <div class="district" id="scaqmd" role="tabpanel">
+      <div class="d-top"><h3>South Coast AQMD</h3><span class="d-rule">RULE 1403</span></div>
+      <div class="d-cities">LA County / Westside — West Hollywood, Beverly Hills, Century City, Culver City, Santa Monica, Marina del Rey, Venice</div>
+      <div class="facts">
+        <div class="fact"><div class="lbl">ACM definition</div><span class="big">&gt; 1%</span><div class="txt">Asbestos by PLM</div></div>
+        <div class="fact"><div class="lbl">Notification trigger</div><span class="big">≥ 100 ft²</span><div class="txt">Regulated ACM, or any demolition</div></div>
+        <div class="fact"><div class="lbl">Advance notice</div><span class="big">10 days</span><div class="txt">Working days before start of work</div></div>
+        <div class="fact"><div class="lbl">Survey required</div><div class="txt">Yes — signed by CAC prior to demo/reno. Only exemption: single-unit dwelling under 100 ft²</div></div>
+      </div>
+      <a class="d-link" href="https://www.aqmd.gov/docs/default-source/rule-book/reg-xiv/rule-1403.pdf" target="_blank" rel="noopener">Rule 1403 full text</a>
+    </div>
+
+    <div class="district" id="avaqmd" role="tabpanel" hidden>
+      <div class="d-top"><h3>Antelope Valley AQMD</h3><span class="d-rule">RULE 1403</span></div>
+      <div class="d-cities">Northern LA County high desert — Lancaster, Palmdale and surrounding areas</div>
+      <div class="facts">
+        <div class="fact"><div class="lbl">ACM definition</div><span class="big">&gt; 1%</span><div class="txt">Same as South Coast</div></div>
+        <div class="fact"><div class="lbl">Notification trigger</div><span class="big">≥ 100 ft²</span><div class="txt">Regulated ACM, or any demolition</div></div>
+        <div class="fact"><div class="lbl">Advance notice</div><span class="big">10 days</span><div class="txt">Working days before start of work</div></div>
+        <div class="fact"><div class="lbl">Note</div><div class="txt">AVAQMD adopted a Rule 1403 essentially identical to South Coast's. File with AVAQMD, not SCAQMD.</div></div>
+      </div>
+      <a class="d-link" href="https://ww2.arb.ca.gov/sites/default/files/classic/technology-clearinghouse/rules/RuleID302.pdf" target="_blank" rel="noopener">AVAQMD Rule 1403</a>
+    </div>
+
+    <div class="district" id="vcapcd" role="tabpanel" hidden>
+      <div class="d-top"><h3>Ventura County APCD</h3><span class="d-rule">RULE 62.7</span></div>
+      <div class="d-cities">Home turf — Ventura, Oxnard, Camarillo, Thousand Oaks, Simi Valley, Moorpark</div>
+      <div class="facts">
+        <div class="fact"><div class="lbl">ACM definition</div><span class="big">&gt; 1%</span><div class="txt">Asbestos by PLM</div></div>
+        <div class="fact"><div class="lbl">Notification trigger</div><span class="big">≥ 100 ft²</span><div class="txt">ACM removed, or any demolition</div></div>
+        <div class="fact"><div class="lbl">Advance notice</div><span class="big">10 days</span><div class="txt">Working days, postmarked or delivered</div></div>
+        <div class="fact"><div class="lbl">Framework</div><div class="txt">Rule 62.7 implements the federal Asbestos NESHAP locally — same 1% / 100 ft² logic.</div></div>
+      </div>
+      <a class="d-link" href="https://www.vcapcd.org/asbestos/" target="_blank" rel="noopener">VCAPCD asbestos program</a>
+    </div>
+  </section>
+
+  <section class="rise" style="animation-delay:.18s">
+    <div class="sec-label">Only once regulated</div>
+    <h2>Friable vs. non-friable</h2>
+    <p class="sec-sub">This split only matters above 1%. It sets the disposal path — and your demo method can move material between columns.</p>
+    <div class="fr">
+      <div class="fr-card a">
+        <div class="cap">FRIABLE</div>
+        <div class="body">
+          <p class="desc">Crumbles, pulverizes, or reduces to powder under hand pressure. Texture coat, joint compound, plaster, insulation.</p>
+          <ul>
+            <li>Double-bag in labeled 6-mil poly asbestos bags</li>
+            <li>Gooseneck / twist-and-tape each bag</li>
+            <li>Generator info and weight labeling</li>
+            <li>Waste shipment record / manifest</li>
+            <li>Facility permitted for friable asbestos</li>
+          </ul>
+        </div>
+      </div>
+      <div class="fr-card b">
+        <div class="cap">NON-FRIABLE</div>
+        <div class="body">
+          <p class="desc">Intact, bonded material that won't release fibers under hand pressure. Some floor tile, mastic, roofing, transite.</p>
+          <ul>
+            <li>Still regulated ACM above 1% — bag and manifest</li>
+            <li>May go to facilities accepting non-friable ACM</li>
+            <li>Keep intact — don't grind, saw, or break</li>
+            <li>Category I vs II distinctions can apply</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="flip"><strong>The flip that catches people:</strong> if your demo method renders non-friable material friable — grinding, sawing, breaking, heavy mechanical disturbance — it legally becomes friable and jumps to the stricter path. Method matters as much as material.</div>
+  </section>
+
+  <section class="rise" style="animation-delay:.22s">
+    <div class="sec-label">Disposal quick-ref</div>
+    <h2>Two waste streams, two gates</h2>
+    <div class="disp">
+      <div class="dcard reg">
+        <h4>Regulated asbestos waste</h4>
+        <div class="trig">TRIGGER — OVER 1% ASBESTOS</div>
+        <ol>
+          <li>Labeled 6-mil asbestos bags, double-bagged</li>
+          <li>Gooseneck sealed</li>
+          <li>Generator and weight labeling</li>
+          <li>Manifest / waste shipment record</li>
+          <li>Permitted asbestos disposal facility</li>
+        </ol>
+      </div>
+      <div class="dcard free">
+        <h4>Non-regulated debris</h4>
+        <div class="trig">TRIGGER — 1% OR BELOW</div>
+        <ol>
+          <li>Double-bag plain poly — <strong>no</strong> asbestos labels or stickers</li>
+          <li>Regular construction debris landfill</li>
+          <li>No asbestos manifest required</li>
+          <li>Keep the non-ACM letter with the load</li>
+          <li>Check separately for lead — a TCLP may apply</li>
+        </ol>
+      </div>
+    </div>
+    <div class="flag">
+      <span class="ic">FIELD NOTE</span>
+      <p><strong>Common mix-up:</strong> asbestos-labeled bags, stickers, gooseneck, and manifest are for <strong>regulated material over 1%</strong> — friable or non-friable. On your typical under-1% jobs, do not use asbestos-labeled bags or stickers. Plain double-bag, regular debris. Labeling non-ACM waste as asbestos can get the load rejected or misrouted at the gate.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      <span class="src">Kustom Ventura Division · PM / Superintendent field reference</span><br>
+      Sources: SCAQMD Rule 1403 · AVAQMD Rule 1403 · VCAPCD Rule 62.7 / federal Asbestos NESHAP · Cal/OSHA 8 CCR 1529<br><br>
+      General regulatory reference, not a compliance determination. Defer to your project's industrial hygienist / CAC directive, current rule text, and the receiving facility's acceptance criteria. Thresholds and notification windows change — verify against the linked district rules before filing.
+    </p>
+  </footer>
+</main>
+
+<script>
+  const state={content:'under',area:'small',friable:'friable'};
+  const verdict=document.getElementById('verdict'),chip=document.getElementById('chip'),
+        vTitle=document.getElementById('vTitle'),vLede=document.getElementById('vLede'),
+        vRows=document.getElementById('vRows');
+
+  const lvl=(el,l)=>{el.classList.remove('ok','warn','alert');el.classList.add(l)};
+
+  function render(){
+    const reg=state.content==='over';
+    let level,chipText,title,lede,rows;
+    if(!reg){
+      level='ok';chipText='Not regulated';title='Non-regulated debris';
+      lede='At or below 1% this is not regulated ACM. Area and friability trigger no air-district requirement. Disposal is regular construction debris.';
+      rows=[
+        ['Status','Not regulated asbestos-containing material'],
+        ['Notification','None required based on content. Demolition of the structure itself may still require notice.'],
+        ['Work practices','Not mandated by content — but your IH or CAC can still direct Cal/OSHA controls: containment, wet methods, HEPA. Follow the directive.'],
+        ['Disposal','Double-bag plain poly, regular debris landfill. No asbestos labels, no manifest. Keep the non-ACM letter with the load.'],
+        ['Also check','Lead — evaluate separately. A TCLP may be needed on lead-paint debris.']
+      ];
+    }else{
+      const notify=state.area==='large';
+      level=notify?'alert':'warn';chipText='Regulated ACM';
+      title=notify?'Regulated · notification required':'Regulated · small-job exemption';
+      lede=notify
+        ?'Over 1% and 100 ft² or more — full regulation plus advance notification to the air district.'
+        :'Over 1% but under 100 ft² — still fully regulated ACM with work practices and asbestos disposal, but exempt from advance notification.';
+      rows=[
+        ['Status','Regulated asbestos-containing material, over 1%'],
+        ['Notification',notify
+          ?'<strong>Required</strong> — file with the air district 10 working days before start.'
+          :'Exempt from advance notice under 100 ft². The small-job exemption covers notification only — not handling or disposal.'],
+        ['Work practices','Full Cal/OSHA asbestos controls — containment, negative air, wet methods, PPE, decon, air clearance.'],
+        ['Friability',state.friable==='friable'?'Friable — strictest disposal path.':'Non-friable — watch for methods that render it friable.'],
+        ['Disposal',state.friable==='friable'
+          ?'Friable path — labeled 6-mil bags, double-bagged, goosenecked, weight-labeled, manifested, permitted friable-asbestos facility.'
+          :'Non-friable path — bag and manifest, facilities accepting non-friable ACM. Keep intact; if your method makes it friable it moves to the friable path.']
+      ];
+    }
+    lvl(verdict,level);lvl(chip,level);
+    chip.textContent=chipText;vTitle.textContent=title;vLede.textContent=lede;
+    vRows.innerHTML=rows.map(r=>`<div class="row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
+  }
+
+  document.querySelectorAll('.seg').forEach(seg=>{
+    const g=seg.dataset.group;
+    seg.querySelectorAll('button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        seg.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));
+        b.setAttribute('aria-pressed','true');
+        state[g]=b.dataset.val;render();
+      });
+    });
+  });
+  render();
+
+  const tabs=document.querySelectorAll('.tabs button');
+  const panels={scaqmd:document.getElementById('scaqmd'),avaqmd:document.getElementById('avaqmd'),vcapcd:document.getElementById('vcapcd')};
+  tabs.forEach(t=>t.addEventListener('click',()=>{
+    tabs.forEach(x=>x.setAttribute('aria-selected','false'));
+    t.setAttribute('aria-selected','true');
+    Object.values(panels).forEach(p=>p.hidden=true);
+    const p=panels[t.dataset.tab];p.hidden=false;
+    p.style.animation='none';p.offsetHeight;p.style.animation='';
+  }));
+</script>
+</body>
+</html>

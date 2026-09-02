@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Asbestos Threshold &amp; Disposal Guide — Kustom Ventura Division</title>
+<meta name="theme-color" content="#0b0f14">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ASB Ref">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -482,6 +490,15 @@
   .v-warn[hidden]{display:none}
   .d-caution{margin-top:14px}
 
+  /* ---------- offline indicator ---------- */
+  .offline-bar{
+    position:fixed;top:0;left:0;right:0;z-index:2000;
+    background:var(--warn-dim);color:var(--warn);border-bottom:1px solid var(--warn-line);
+    font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.03em;
+    text-align:center;padding:8px 14px;line-height:1.4;
+  }
+  .offline-bar[hidden]{display:none}
+
   /* ---------- collapsible sections ---------- */
   .drop{border:1px solid var(--line);border-radius:var(--r);background:var(--surface-1);overflow:hidden}
   .drop>summary{list-style:none;cursor:pointer;padding:22px 24px;display:block;transition:background .18s ease}
@@ -505,6 +522,7 @@
 </style>
 </head>
 <body>
+<div class="offline-bar" id="offlineBar" role="status" aria-live="polite" hidden>⚠ Offline — showing the cached copy. It may not reflect current rule text.</div>
 <div class="glow"></div>
 
 <header>
@@ -1079,6 +1097,20 @@
     const p=panels[t.dataset.tab];p.hidden=false;
     p.style.animation='none';p.offsetHeight;p.style.animation='';
   }));
+
+  // ---- offline indicator ----
+  const offlineBar=document.getElementById('offlineBar');
+  const updateOnline=()=>{ offlineBar.hidden = navigator.onLine !== false; };
+  window.addEventListener('online',updateOnline);
+  window.addEventListener('offline',updateOnline);
+  updateOnline();
+
+  // ---- service worker registration (feature-checked, failure-safe) ----
+  if('serviceWorker' in navigator){
+    window.addEventListener('load',()=>{
+      navigator.serviceWorker.register('sw.js').catch(()=>{ /* offline caching unavailable; page still works */ });
+    });
+  }
 </script>
 </body>
 </html>

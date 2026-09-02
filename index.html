@@ -368,79 +368,67 @@
   .readout{border-top:0}
   .panel[hidden]{display:none}
 
-  /* ---------- job-flow route rail ---------- */
-  .rmap{padding:8px 2px 2px}
-  .rail{display:flex;align-items:stretch;--rc:var(--ok)}
-  .rail.r-A{--rc:var(--ok)}
-  .rail.r-F{--rc:var(--alert)}
-  .rail.r-N{--rc:var(--warn)}
+  /* ---------- process / topology map ---------- */
+  .topo{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:8px 0 6px}
+  .topo-stage{position:relative;width:950px;height:400px;margin:0 auto}
+  .topo-svg{position:absolute;inset:0;width:950px;height:400px;overflow:visible;pointer-events:none}
 
-  .stage{
-    flex:0 0 auto;width:150px;background:var(--surface-2);border:1px solid var(--line);
-    border-radius:12px;padding:15px 13px 16px;text-align:center;
-    display:flex;flex-direction:column;align-items:center;gap:2px;
-    transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease;
+  .conn{fill:none;stroke:var(--line);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;transition:stroke .35s ease,opacity .35s ease}
+  .conn.spine{stroke:var(--accent)}
+  .conn.flow{stroke-dasharray:10 12;animation:dashmove .95s linear infinite}
+  @keyframes dashmove{to{stroke-dashoffset:-22}}
+  .conn.dim{stroke:var(--line);opacity:.55;stroke-dasharray:none;animation:none}
+  .conn.g-a.on{stroke:var(--ok)}
+  .conn.g-share.on{stroke:var(--accent)}
+  .conn.g-f.on{stroke:var(--alert)}
+  .conn.g-n.on{stroke:var(--warn)}
+
+  .pkt-c{opacity:0;transition:opacity .3s ease}
+  .pkt-c.on{opacity:1;filter:url(#g)}
+  .pkt-c.c-accent{fill:var(--accent)} .pkt-c.c-ok{fill:var(--ok)} .pkt-c.c-alert{fill:var(--alert)} .pkt-c.c-warn{fill:var(--warn)}
+
+  .tnode{
+    position:absolute;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;
+    padding:10px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;gap:2px;
+    transition:border-color .35s ease,box-shadow .35s ease,opacity .35s ease,filter .35s ease,transform .35s ease;
   }
-  .stage .sic{font-size:21px;line-height:1;margin-bottom:5px}
-  .stage .st{font-size:13.5px;font-weight:700;color:var(--text);line-height:1.2}
-  .stage .ss{font-size:10.5px;color:var(--text-3);font-family:'JetBrains Mono',monospace;letter-spacing:.02em;line-height:1.4}
-  .stage.start{border-color:var(--line-bright)}
-  .stage.start .sic{filter:drop-shadow(0 0 7px var(--accent))}
-  .stage.gate{border-color:var(--line-bright)}
-  .stage.gate.reg{border-color:var(--alert)}
-  .stage.gate.reg .ss{color:var(--alert)}
-  .stage.dest{
-    width:212px;border-color:var(--rc);
-    box-shadow:0 0 0 1px var(--rc),0 16px 34px -20px var(--rc);
+  .tnode .sic{font-size:20px;line-height:1;margin-bottom:3px}
+  .tnode .st{font-size:13px;font-weight:700;color:var(--text);line-height:1.2}
+  .tnode .ss{font-size:10px;color:var(--text-3);font-family:'JetBrains Mono',monospace;line-height:1.35;letter-spacing:.01em}
+  .tnode.spine{border-color:var(--line-bright)}
+  .tnode.start .sic{filter:drop-shadow(0 0 7px var(--accent))}
+  .tnode.gate.reg{border-color:var(--alert)}
+  .tnode.gate.reg .ss{color:var(--alert)}
+  .tnode.dim{opacity:.3;filter:grayscale(.85)}
+  .tnode.dest{--dc:var(--line)}
+  .tnode.dest.deb{--dc:var(--ok)} .tnode.dest.ket{--dc:var(--alert)} .tnode.dest.simi{--dc:var(--warn)}
+  .tnode.dest{border-color:var(--dc)}
+  .tnode.dest.on{
+    box-shadow:0 0 0 1px var(--dc),0 16px 34px -18px var(--dc);
     transform-box:fill-box;transform-origin:center;animation:destpulse 2.3s ease-in-out infinite;
   }
-  .stage.dest .st{font-size:15px}
-  .stage.dest .ss{font-size:11px;color:var(--text-2);margin-top:2px}
   @keyframes destpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
-  .dlink{margin-top:9px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:var(--rc);text-decoration:none;letter-spacing:.04em}
+  .tnode.dest .st{font-size:14.5px}
+  .tnode.dest .ss{font-size:10.5px;color:var(--text-2);margin-top:2px}
+  .dlink{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--dc);text-decoration:none;letter-spacing:.04em}
   .dlink:hover{text-decoration:underline}
-  .dlink[hidden]{display:none}
 
-  .link{flex:1 1 auto;min-width:72px;position:relative;display:flex;align-items:center;justify-content:center}
-  .link.pre{--rc:var(--accent)}
-  .link .track{position:absolute;left:0;right:0;top:50%;height:3px;transform:translateY(-50%);background:var(--line);border-radius:2px}
-  .link .flow{
-    position:absolute;left:0;right:0;top:50%;height:3px;transform:translateY(-50%);border-radius:2px;
-    background:repeating-linear-gradient(90deg,var(--rc) 0 9px,transparent 9px 20px);
-    background-size:20px 100%;animation:flowx .8s linear infinite;
+  .tpill{
+    position:absolute;transform:translate(-50%,-50%);z-index:3;
+    font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.03em;
+    padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:var(--surface-3);color:var(--text-2);
+    text-align:center;line-height:1.2;white-space:nowrap;
+    transition:opacity .35s ease,filter .35s ease,background .3s ease,color .3s ease;
   }
-  @keyframes flowx{to{background-position:20px 0}}
-  .link .pkt{
-    position:absolute;top:50%;left:0;width:9px;height:9px;border-radius:50%;
-    background:var(--rc);box-shadow:0 0 10px var(--rc);transform:translate(-50%,-50%);
-    animation:runx 1.7s linear infinite;
-  }
-  @keyframes runx{from{left:0}to{left:100%}}
-  .link .pill{
-    position:relative;z-index:2;font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:700;
-    letter-spacing:.04em;padding:6px 9px;border-radius:7px;border:1px solid var(--line);
-    background:var(--surface-3);color:var(--text-2);text-align:center;line-height:1.35;max-width:94%;
-  }
-  .pill.on-alert{background:var(--alert);color:#04141a;border-color:var(--alert)}
-  .pill.on-warn{background:var(--warn);color:#04141a;border-color:var(--warn)}
-  .pill.on-ok{background:var(--ok);color:#04141a;border-color:var(--ok)}
-  .pill.on-accent{background:var(--accent);color:#04141a;border-color:var(--accent)}
-  .pill.off{background:var(--surface-3);color:var(--text-3);border-color:var(--line)}
+  .tpill.dim{opacity:.28;filter:grayscale(.8)}
+  .tpill.on-alert{background:var(--alert);color:#04141a;border-color:var(--alert)}
+  .tpill.on-warn{background:var(--warn);color:#04141a;border-color:var(--warn)}
+  .tpill.on-ok{background:var(--ok);color:#04141a;border-color:var(--ok)}
+  .tpill.off{background:var(--surface-3);color:var(--text-3);border-color:var(--line)}
 
-  @media(max-width:760px){
-    .rail{flex-direction:column;align-items:stretch}
-    .stage,.stage.dest{width:auto}
-    .link{min-height:58px;min-width:0;width:100%}
-    .link .track{left:50%;right:auto;top:0;bottom:0;width:3px;height:auto;transform:translateX(-50%)}
-    .link .flow{
-      left:50%;right:auto;top:0;bottom:0;width:3px;height:auto;transform:translateX(-50%);
-      background:repeating-linear-gradient(180deg,var(--rc) 0 9px,transparent 9px 20px);
-      background-size:100% 20px;animation:flowy .8s linear infinite;
-    }
-    .link .pkt{left:50%;top:0;transform:translate(-50%,-50%);animation:runy 1.7s linear infinite}
-  }
-  @keyframes flowy{to{background-position:0 20px}}
-  @keyframes runy{from{top:0}to{top:100%}}
+  .toposcroll{display:none;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);text-align:center;margin-top:6px;letter-spacing:.04em}
+  @media(max-width:1090px){.toposcroll{display:block}}
 
   .lnk{color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap}
   .lnk:hover{text-decoration:underline}
@@ -462,7 +450,7 @@
   @media(prefers-reduced-motion:reduce){
     .rise,.district{animation:none;opacity:1;transform:none}
     .eyebrow::before{animation:none}
-    .link .flow,.link .pkt,.stage.dest{animation:none}
+    .conn.flow,.tnode.dest.on{animation:none}
     *{transition:none!important}
   }
 </style>
@@ -542,49 +530,65 @@
 
       <div class="readout">
         <div class="panel" id="panelMap">
-          <div class="rmap">
-            <div class="rail r-A" id="rail">
-              <div class="stage node start">
-                <span class="sic">🗓️</span>
-                <div class="st">Job scheduled</div>
-                <div class="ss">before work starts</div>
+          <div class="topo">
+            <div class="topo-stage" id="topo">
+              <svg class="topo-svg" viewBox="0 0 950 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <defs>
+                  <filter id="g" x="-60%" y="-60%" width="220%" height="220%">
+                    <feGaussianBlur stdDeviation="3.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                  </filter>
+                </defs>
+                <!-- spine: new job -> haz test -> 1% gate -->
+                <path class="conn spine flow" d="M130,130 H160"/>
+                <path class="conn spine flow" id="pSpine2" d="M282,130 H312"/>
+                <path class="conn spine flow" d="M450,130 H516"/>
+                <!-- ≤1% branch (up to debris) -->
+                <path class="conn g-a on flow" id="cDeb" d="M516,130 V58 H760"/>
+                <!-- >1% shared trunk (down, then bus to friability split) -->
+                <path class="conn g-share dim" id="cDown" d="M516,130 V228"/>
+                <path class="conn g-share dim" id="cBus" d="M516,228 H588"/>
+                <!-- friable branch -->
+                <path class="conn g-f dim" id="cKet" d="M588,228 H760"/>
+                <!-- non-friable branch (down to simi) -->
+                <path class="conn g-n dim" id="cDownN" d="M588,228 V345 H760"/>
+                <!-- travelling packets -->
+                <circle class="pkt-c c-accent on" r="4.5"><animateMotion dur="1.5s" repeatCount="indefinite"><mpath href="#pSpine2"/></animateMotion></circle>
+                <circle class="pkt-c c-ok on" id="pkDeb" r="4.5"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
+                <circle class="pkt-c c-accent" id="pkDown" r="4.5"><animateMotion dur="1.9s" repeatCount="indefinite"><mpath href="#cDown"/></animateMotion></circle>
+                <circle class="pkt-c c-alert" id="pkKet" r="4.5"><animateMotion dur="1.9s" repeatCount="indefinite"><mpath href="#cKet"/></animateMotion></circle>
+                <circle class="pkt-c c-warn" id="pkDownN" r="4.5"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#cDownN"/></animateMotion></circle>
+              </svg>
+
+              <div class="tnode spine start" style="left:8px;top:86px;width:122px;height:88px">
+                <span class="sic">🏗️</span><div class="st">New job</div><div class="ss">removal identified</div>
+              </div>
+              <div class="tnode spine" style="left:160px;top:86px;width:122px;height:88px">
+                <span class="sic">🧪</span><div class="st">Haz-mat test</div><div class="ss">sample for asbestos</div>
+              </div>
+              <div class="tnode spine gate" id="stageGate" style="left:312px;top:86px;width:138px;height:88px">
+                <span class="sic">◆</span><div class="st">1% gate</div><div class="ss" id="gateSub">≤ 1% · not regulated</div>
               </div>
 
-              <div class="link pre">
-                <span class="track"></span><span class="flow"></span><span class="pkt"></span>
-                <span class="pill off" id="pillNotice">NO DISTRICT NOTICE</span>
+              <div class="tnode dest deb on" id="destDeb" style="left:760px;top:11px;width:182px;height:94px">
+                <span class="sic">🗑️</span><div class="st">Debris landfill</div><div class="ss">≤ 1% · any accepting site</div>
+              </div>
+              <div class="tnode dest ket dim" id="destKet" style="left:760px;top:181px;width:182px;height:94px">
+                <span class="sic">📍</span><div class="st">Kettleman Hills</div><div class="ss">35251 Old Skyline Rd</div>
+                <a class="dlink" href="https://www.google.com/maps/search/?api=1&amp;query=35251+Old+Skyline+Road+Kettleman+City+CA+93239" target="_blank" rel="noopener">Directions ↗</a>
+              </div>
+              <div class="tnode dest simi dim" id="destSimi" style="left:760px;top:298px;width:182px;height:94px">
+                <span class="sic">📍</span><div class="st">Simi Valley</div><div class="ss">2801 Madera Rd · call ahead</div>
+                <a class="dlink" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">Directions ↗</a>
               </div>
 
-              <div class="stage node gate" id="stageGate">
-                <span class="sic">◆</span>
-                <div class="st">1% gate</div>
-                <div class="ss" id="gateSub">≤ 1% · not regulated</div>
-              </div>
-
-              <div class="link">
-                <span class="track"></span><span class="flow"></span><span class="pkt"></span>
-                <span class="pill on-ok" id="pillPack">PLAIN DOUBLE-BAG</span>
-              </div>
-
-              <div class="stage node">
-                <span class="sic">▣</span>
-                <div class="st">Off site</div>
-                <div class="ss">load pulled · day 1</div>
-              </div>
-
-              <div class="link">
-                <span class="track"></span><span class="flow"></span><span class="pkt"></span>
-                <span class="pill off" id="pillWindow">NO DISPOSAL WINDOW</span>
-              </div>
-
-              <div class="stage node dest" id="dest">
-                <span class="sic" id="destIc">🗑️</span>
-                <div class="st" id="destName">Debris landfill</div>
-                <div class="ss" id="destAddr">any site that accepts it</div>
-                <a class="dlink" id="destLink" href="#" target="_blank" rel="noopener" hidden>Directions ↗</a>
-              </div>
+              <span class="tpill on-ok" id="pillDeb" style="left:638px;top:58px">PLAIN DOUBLE-BAG</span>
+              <span class="tpill off dim" id="pillNotice" style="left:516px;top:179px">AQMD NOTICE</span>
+              <span class="tpill on-alert dim" id="pillKetPack" style="left:674px;top:210px">LABELS + MANIFEST</span>
+              <span class="tpill on-alert dim" id="pillKetWin" style="left:674px;top:246px">⚑ 10-DAY WINDOW</span>
+              <span class="tpill on-warn dim" id="pillSimi" style="left:674px;top:345px">OSHA TRACKING · NO LABELS</span>
             </div>
           </div>
+          <div class="toposcroll">← scroll to see the full map →</div>
         </div>
 
         <div class="panel" id="panelRead" hidden>
@@ -772,10 +776,14 @@
   const MAP_KETTLEMAN='https://www.google.com/maps/search/?api=1&query=35251+Old+Skyline+Road+Kettleman+City+CA+93239';
   const MAP_SIMI='https://www.google.com/maps/search/?api=1&query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065';
 
-  const rail=document.getElementById('rail'),stageGate=document.getElementById('stageGate'),gateSub=document.getElementById('gateSub');
-  const pillNotice=document.getElementById('pillNotice'),pillPack=document.getElementById('pillPack'),pillWindow=document.getElementById('pillWindow');
-  const destIc=document.getElementById('destIc'),destName=document.getElementById('destName'),destAddr=document.getElementById('destAddr'),destLink=document.getElementById('destLink');
-  const setPill=(el,cls,txt)=>{el.className='pill '+cls;el.textContent=txt;};
+  const $=id=>document.getElementById(id);
+  const stageGate=$('stageGate'),gateSub=$('gateSub');
+  const cDeb=$('cDeb'),cDown=$('cDown'),cBus=$('cBus'),cKet=$('cKet'),cDownN=$('cDownN');
+  const pkDeb=$('pkDeb'),pkDown=$('pkDown'),pkKet=$('pkKet'),pkDownN=$('pkDownN');
+  const destDeb=$('destDeb'),destKet=$('destKet'),destSimi=$('destSimi');
+  const pillDeb=$('pillDeb'),pillNotice=$('pillNotice'),pillKetPack=$('pillKetPack'),pillKetWin=$('pillKetWin'),pillSimi=$('pillSimi');
+  const setBranch=(el,grp,on)=>{el.setAttribute('class','conn '+grp+(on?' on flow':' dim'));};
+  const setPill=(el,cls,txt)=>{el.className='tpill '+cls;el.textContent=txt;};
   const segArea=document.querySelector('.seg[data-group="area"]'),
         segFri=document.querySelector('.seg[data-group="friable"]');
   const ctrlArea=segArea.closest('.ctrl'),ctrlFri=segFri.closest('.ctrl');
@@ -831,42 +839,37 @@
   function updateRoadmap(){
     const reg=state.content==='over';
     const notify=state.area==='large';
-    const active=!reg?'A':(state.friable==='friable'?'F':'N');
-
     const fri=state.friable==='friable';
+    const aOn=!reg, fOn=reg&&fri, nOn=reg&&!fri;
 
-    // route colour + gate
-    rail.className='rail r-'+active;
+    // 1% gate
     stageGate.classList.toggle('reg',reg);
     gateSub.textContent=reg?'> 1% · regulated':'≤ 1% · not regulated';
 
-    // pill 1 — advance notice (before work starts)
-    if(!reg)        setPill(pillNotice,'off','NO DISTRICT NOTICE');
-    else if(notify) setPill(pillNotice,fri?'on-alert':'on-warn','⚑ 10-DAY NOTICE · BEFORE START');
-    else            setPill(pillNotice,'off','NOTICE EXEMPT · <100 FT²');
+    // ≤1% branch (debris)
+    setBranch(cDeb,'g-a',aOn);pkDeb.classList.toggle('on',aOn);
+    destDeb.classList.toggle('on',aOn);destDeb.classList.toggle('dim',!aOn);
+    pillDeb.classList.toggle('dim',!aOn);
 
-    // pill 2 — packaging
-    if(!reg)      setPill(pillPack,'on-ok','PLAIN DOUBLE-BAG');
-    else if(fri)  setPill(pillPack,'on-alert','LABELS + MANIFEST');
-    else          setPill(pillPack,'on-warn','OSHA TRACKING · NO LABELS');
-
-    // pill 3 — disposal window (friable only)
-    if(reg&&fri)  setPill(pillWindow,'on-alert','⚑ 10-DAY WINDOW');
-    else          setPill(pillWindow,'off','NO DISPOSAL WINDOW');
-
-    // destination card
-    if(!reg){
-      destIc.textContent='🗑️';destName.textContent='Debris landfill';
-      destAddr.textContent='any site that accepts it';destLink.hidden=true;
-    }else if(fri){
-      destIc.textContent='📍';destName.textContent='Kettleman Hills';
-      destAddr.textContent='35251 Old Skyline Rd, Kettleman City';
-      destLink.hidden=false;destLink.href=MAP_KETTLEMAN;
-    }else{
-      destIc.textContent='📍';destName.textContent='Simi Valley Landfill';
-      destAddr.textContent='2801 Madera Rd · call ahead';
-      destLink.hidden=false;destLink.href=MAP_SIMI;
+    // >1% shared trunk — the AQMD notice comes AFTER the % result
+    setBranch(cDown,'g-share',reg);setBranch(cBus,'g-share',reg);
+    pkDown.classList.toggle('on',reg);
+    if(!reg){ setPill(pillNotice,'off AQMD','AQMD NOTICE');pillNotice.classList.add('dim'); }
+    else{
+      pillNotice.classList.remove('dim');
+      if(notify) setPill(pillNotice,fri?'on-alert':'on-warn','⚑ 10-DAY NOTICE');
+      else       setPill(pillNotice,'off','NOTICE EXEMPT · <100 FT²');
     }
+
+    // friable branch (Kettleman)
+    setBranch(cKet,'g-f',fOn);pkKet.classList.toggle('on',fOn);
+    destKet.classList.toggle('on',fOn);destKet.classList.toggle('dim',!fOn);
+    pillKetPack.classList.toggle('dim',!fOn);pillKetWin.classList.toggle('dim',!fOn);
+
+    // non-friable branch (Simi)
+    setBranch(cDownN,'g-n',nOn);pkDownN.classList.toggle('on',nOn);
+    destSimi.classList.toggle('on',nOn);destSimi.classList.toggle('dim',!nOn);
+    pillSimi.classList.toggle('dim',!nOn);
 
     // Below the 1% line, area + friability are moot — grey them out.
     const off=!reg;

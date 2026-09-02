@@ -279,14 +279,15 @@
   .flip strong{color:var(--alert);font-weight:700}
 
   /* ---------- disposal ---------- */
-  .disp{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  @media(max-width:640px){.disp{grid-template-columns:1fr}}
+  .disp{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:820px){.disp{grid-template-columns:1fr}}
   .dcard{
     background:var(--surface-1);border:1px solid var(--line);
     border-radius:var(--r);padding:24px;
   }
   .dcard.reg{border-top:3px solid var(--alert)}
   .dcard.free{border-top:3px solid var(--ok)}
+  .dcard.nonfri{border-top:3px solid var(--warn)}
   .dcard h4{font-size:18px;font-weight:700;letter-spacing:-.015em;margin-bottom:6px;color:var(--text)}
   .dcard .trig{
     font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
@@ -294,6 +295,7 @@
   }
   .dcard.reg .trig{color:var(--alert)}
   .dcard.free .trig{color:var(--ok)}
+  .dcard.nonfri .trig{color:var(--warn)}
   .dcard ol{list-style:none;counter-reset:s;display:grid;gap:12px}
   .dcard li{
     counter-increment:s;font-size:14px;color:var(--text-2);
@@ -332,9 +334,130 @@
 
   .rise{opacity:0;transform:translateY(18px);animation:rise .62s cubic-bezier(.2,.8,.3,1) forwards}
   @keyframes rise{to{opacity:1;transform:none}}
+
+  /* ---------- disabled controls (greyed when they no longer matter) ---------- */
+  .seg.is-off{opacity:.36;filter:grayscale(.7)}
+  .seg.is-off button{cursor:not-allowed}
+  .ctrl .na{
+    display:none;margin-top:12px;font-family:'JetBrains Mono',monospace;
+    font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--text-3);font-weight:600;line-height:1.5;
+  }
+  .ctrl.is-off .na{display:block}
+  .ctrl.is-off .q{color:var(--text-3)}
+
+  /* ---------- live roadmap ---------- */
+  .roadmap{
+    background:var(--surface-1);border:1px solid var(--line);
+    border-radius:var(--r);padding:30px 24px 30px;overflow:hidden;
+  }
+  .rm-flow{display:flex;flex-direction:column;align-items:center}
+  .rm-node{
+    width:min(360px,100%);text-align:center;
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:12px;padding:15px 18px;
+  }
+  .rm-node.gate{border-color:var(--line-bright);background:var(--surface-3)}
+  .rm-ic{
+    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;
+    color:var(--accent);display:inline-block;margin-bottom:3px;letter-spacing:.04em;
+  }
+  .rm-node-t{font-size:14.5px;font-weight:700;color:var(--text)}
+  .rm-node-s{
+    font-size:11.5px;color:var(--text-3);margin-top:2px;
+    font-family:'JetBrains Mono',monospace;letter-spacing:.02em;
+    transition:color .3s ease;
+  }
+  .rm-stem{width:2px;height:30px;position:relative;background:var(--line);border-radius:2px;overflow:hidden}
+  .rm-stem .packet{
+    position:absolute;left:-3px;width:8px;height:8px;border-radius:50%;
+    background:var(--accent);box-shadow:0 0 12px var(--accent);
+    animation:flow 1.5s linear infinite;
+  }
+  @keyframes flow{from{top:-10px}to{top:32px}}
+  .rm-fork{width:2px;height:18px;background:var(--line);border-radius:2px}
+
+  .rm-rail{position:relative;width:100%;height:20px}
+  .rm-rail .rail-line{position:absolute;top:0;left:16.66%;right:16.66%;height:2px;background:var(--line)}
+
+  .rm-lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  @media(max-width:760px){
+    .rm-lanes{grid-template-columns:1fr;gap:22px}
+    .rm-rail{display:none}
+    .rm-fork{height:22px}
+  }
+
+  .lane{--lanec:var(--text-3);position:relative;transition:opacity .35s ease,filter .35s ease}
+  .lane.A{--lanec:var(--ok)}
+  .lane.F{--lanec:var(--alert)}
+  .lane.N{--lanec:var(--warn)}
+  .lane.dim{opacity:.32;filter:grayscale(.85)}
+  .lane-drop{width:2px;height:20px;margin:0 auto;background:var(--line);border-radius:2px;position:relative;overflow:hidden}
+  .lane.active .lane-drop{background:var(--lanec)}
+  .lane.active .lane-drop::after{
+    content:"";position:absolute;left:-3px;width:8px;height:8px;border-radius:50%;
+    background:var(--lanec);box-shadow:0 0 12px var(--lanec);
+    animation:flow2 1.4s linear infinite;
+  }
+  @keyframes flow2{from{top:-10px}to{top:22px}}
+
+  .lane-card{
+    background:var(--surface-2);border:1px solid var(--line);
+    border-radius:12px;padding:18px 18px 16px;position:relative;
+    transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease;
+  }
+  .lane.active .lane-card{
+    border-color:var(--lanec);
+    box-shadow:0 0 0 1px var(--lanec),0 16px 38px -20px var(--lanec);
+    transform:translateY(-3px);
+  }
+  .lane-cap{
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    letter-spacing:.09em;color:var(--lanec);margin-bottom:14px;
+    display:flex;align-items:center;gap:8px;
+  }
+  .lane-cap::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--lanec);flex-shrink:0}
+  .lane.active .lane-cap::before{box-shadow:0 0 10px var(--lanec)}
+  .lane-steps{list-style:none;display:grid;gap:11px;margin:0}
+  .lane-steps li{font-size:12.5px;color:var(--text-2);padding-left:20px;position:relative;line-height:1.5}
+  .lane-steps li::before{content:"";position:absolute;left:2px;top:6px;width:6px;height:6px;border-radius:50%;background:var(--lanec);opacity:.55}
+  .lane.active .lane-steps li::before{opacity:1}
+  .lane-steps li strong{color:var(--text);font-weight:700}
+  .lane-badge{
+    margin-top:11px;padding:10px 12px;border-radius:9px;
+    border:1px solid var(--line);background:var(--surface-3);
+    font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+    letter-spacing:.03em;line-height:1.6;color:var(--text-3);
+    display:flex;flex-direction:column;gap:3px;
+  }
+  .lane-badge .bi{font-weight:700;letter-spacing:.07em}
+  .b-notice{background:var(--warn-dim);border-color:var(--warn-line);color:var(--warn)}
+  .b-window{background:var(--alert-dim);border-color:var(--alert-line);color:var(--alert)}
+  .b-loc{background:var(--accent-dim);border-color:var(--line-bright);color:var(--accent)}
+  .b-muted{background:var(--surface-3);border-color:var(--line);color:var(--text-3)}
+  .lane-dest{
+    margin-top:14px;display:flex;align-items:center;gap:11px;
+    padding:12px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--line);
+  }
+  .lane.active .lane-dest{border-color:var(--lanec)}
+  .lane-dest .pin{font-size:17px;line-height:1;flex-shrink:0}
+  .lane-dest .dwrap{display:flex;flex-direction:column;min-width:0}
+  .lane-dest .dn{font-size:13.5px;font-weight:700;color:var(--text)}
+  .lane-dest .dl{font-size:10.5px;color:var(--text-3);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;margin-top:1px}
+  .rm-legend{
+    display:flex;flex-wrap:wrap;gap:16px;margin-top:24px;padding-top:18px;
+    border-top:1px solid var(--line);
+  }
+  .rm-legend span{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-3);
+    letter-spacing:.04em;display:flex;align-items:center;gap:7px;
+  }
+  .rm-legend i{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+
   @media(prefers-reduced-motion:reduce){
     .rise,.district{animation:none;opacity:1;transform:none}
     .eyebrow::before{animation:none}
+    .rm-stem .packet,.lane.active .lane-drop::after{animation:none}
     *{transition:none!important}
   }
 </style>
@@ -390,6 +513,7 @@
               <button data-val="small" aria-pressed="true">&lt; 100 ft²<span class="tag">or &lt; 100 linear ft</span></button>
               <button data-val="large" aria-pressed="false">≥ 100 ft²<span class="tag">or ≥ 100 linear ft</span></button>
             </div>
+            <div class="na">N/A at ≤ 1% — the 1% gate already decided this load</div>
           </div>
           <div class="ctrl">
             <div class="n">Variable 03</div>
@@ -398,6 +522,7 @@
               <button data-val="friable" aria-pressed="true">Friable<span class="tag">Crumbles by hand</span></button>
               <button data-val="non" aria-pressed="false">Non-friable<span class="tag">Intact / bonded</span></button>
             </div>
+            <div class="na">N/A at ≤ 1% — no disposal split below the line</div>
           </div>
         </div>
       </div>
@@ -411,6 +536,84 @@
           <p class="v-lede" id="vLede"></p>
           <div class="rows" id="vRows"></div>
         </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="rise" style="animation-delay:.16s" id="routeSection">
+    <div class="sec-label">Live route</div>
+    <h2>Where this load travels</h2>
+    <p class="sec-sub">The map redraws as you set the three variables above. The lit lane is this job's route; notices, deadlines, and the dump site light up where they apply.</p>
+
+    <div class="roadmap" id="roadmap">
+      <div class="rm-flow">
+        <div class="rm-node origin">
+          <span class="rm-ic">▣</span>
+          <div class="rm-node-t">Removed from site</div>
+          <div class="rm-node-s">load leaves the job</div>
+        </div>
+        <div class="rm-stem"><span class="packet"></span></div>
+        <div class="rm-node gate">
+          <span class="rm-ic">1%</span>
+          <div class="rm-node-t">Lab-result gate</div>
+          <div class="rm-node-s" id="rmGateVal">≤ 1% — not regulated</div>
+        </div>
+        <div class="rm-fork"></div>
+      </div>
+
+      <div class="rm-rail"><span class="rail-line"></span></div>
+
+      <div class="rm-lanes">
+        <div class="lane A" id="laneA">
+          <div class="lane-drop"></div>
+          <div class="lane-card">
+            <div class="lane-cap">NON-REGULATED · ≤ 1%</div>
+            <ul class="lane-steps">
+              <li><strong>Plain double-bag.</strong> No asbestos labels, stickers, or manifest.</li>
+              <li>Regular construction-debris landfill that accepts the material.</li>
+              <li>Keep the non-ACM lab letter with the load; check lead (TCLP) separately.</li>
+            </ul>
+            <div class="lane-badge b-muted"><span class="bi">ADVANCE NOTICE</span><span>None from content — structure demolition may still need district notice.</span></div>
+            <div class="lane-badge b-loc"><span class="bi">DUMP LOCATION</span><span>LA-area job → LA-area landfill · Ventura job → local site. Don't haul an LA load back to Ventura.</span></div>
+            <div class="lane-dest"><span class="pin">🗑️</span><div class="dwrap"><span class="dn">Regular debris landfill</span><span class="dl">matches the job's jurisdiction</span></div></div>
+          </div>
+        </div>
+
+        <div class="lane F" id="laneF">
+          <div class="lane-drop"></div>
+          <div class="lane-card">
+            <div class="lane-cap">FRIABLE · &gt; 1%</div>
+            <div class="lane-badge b-muted" id="noticeF"><span class="bi">ADVANCE NOTICE</span><span>Under 100 ft² — exempt from advance notification.</span></div>
+            <ul class="lane-steps">
+              <li><strong>Labeled 6-mil bags</strong>, double-bagged, goosenecked, weight-labeled.</li>
+              <li>Manifest / waste shipment record rides with the load.</li>
+              <li>Full Cal/OSHA controls — containment, negative air, wet methods, decon.</li>
+            </ul>
+            <div class="lane-badge b-window"><span class="bi">⚑ 10-DAY WINDOW</span><span>Must reach Kettleman within 10 days of removal — the day you pull it off site is day 1.</span></div>
+            <div class="lane-dest"><span class="pin">📍</span><div class="dwrap"><span class="dn">Kettleman Hills</span><span class="dl">friable-permitted facility</span></div></div>
+          </div>
+        </div>
+
+        <div class="lane N" id="laneN">
+          <div class="lane-drop"></div>
+          <div class="lane-card">
+            <div class="lane-cap">NON-FRIABLE · &gt; 1%</div>
+            <div class="lane-badge b-muted" id="noticeN"><span class="bi">ADVANCE NOTICE</span><span>Under 100 ft² — exempt from advance notification.</span></div>
+            <ul class="lane-steps">
+              <li><strong>OSHA waste tracking</strong> — no asbestos hazard labels required.</li>
+              <li>Bag and keep intact — don't grind, saw, or break.</li>
+              <li>If your method makes it friable, it jumps to the Kettleman path.</li>
+            </ul>
+            <div class="lane-badge b-muted"><span class="bi">NO WINDOW</span><span>No 10-day disposal deadline — that clock is friable-only.</span></div>
+            <div class="lane-dest"><span class="pin">📍</span><div class="dwrap"><span class="dn">Simi Valley Landfill</span><span class="dl">accepts non-friable ACM</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rm-legend">
+        <span><i style="background:var(--ok)"></i>≤ 1% · not regulated</span>
+        <span><i style="background:var(--alert)"></i>Friable · Kettleman · 10-day clock</span>
+        <span><i style="background:var(--warn)"></i>Non-friable · Simi Valley</span>
       </div>
     </div>
   </section>
@@ -476,8 +679,9 @@
             <li>Double-bag in labeled 6-mil poly asbestos bags</li>
             <li>Gooseneck / twist-and-tape each bag</li>
             <li>Generator info and weight labeling</li>
-            <li>Waste shipment record / manifest</li>
-            <li>Facility permitted for friable asbestos</li>
+            <li>Waste shipment record / manifest with the load</li>
+            <li><strong>Destination — Kettleman Hills</strong>, friable-permitted facility</li>
+            <li><strong>10-day window</strong> — dispose within 10 days of removal (removal day = day 1)</li>
           </ul>
         </div>
       </div>
@@ -486,47 +690,59 @@
         <div class="body">
           <p class="desc">Intact, bonded material that won't release fibers under hand pressure. Some floor tile, mastic, roofing, transite.</p>
           <ul>
-            <li>Still regulated ACM above 1% — bag and manifest</li>
-            <li>May go to facilities accepting non-friable ACM</li>
+            <li>Still regulated ACM above 1%, but <strong>OSHA waste tracking only — no asbestos hazard labels</strong></li>
             <li>Keep intact — don't grind, saw, or break</li>
+            <li><strong>Destination — Simi Valley Landfill</strong>, accepts non-friable ACM</li>
+            <li><strong>No 10-day window</strong> — no disposal deadline like friable</li>
             <li>Category I vs II distinctions can apply</li>
           </ul>
         </div>
       </div>
     </div>
-    <div class="flip"><strong>The flip that catches people:</strong> if your demo method renders non-friable material friable — grinding, sawing, breaking, heavy mechanical disturbance — it legally becomes friable and jumps to the stricter path. Method matters as much as material.</div>
+    <div class="flip"><strong>The flip that catches people:</strong> if your demo method renders non-friable material friable — grinding, sawing, breaking, heavy mechanical disturbance — it legally becomes friable and jumps to the stricter Kettleman path: labels, manifest, and the 10-day window all kick in. Method matters as much as material.</div>
   </section>
 
   <section class="rise" style="animation-delay:.22s">
     <div class="sec-label">Disposal quick-ref</div>
-    <h2>Two waste streams, two gates</h2>
+    <h2>Three routes, three gates</h2>
     <div class="disp">
-      <div class="dcard reg">
-        <h4>Regulated asbestos waste</h4>
-        <div class="trig">TRIGGER — OVER 1% ASBESTOS</div>
-        <ol>
-          <li>Labeled 6-mil asbestos bags, double-bagged</li>
-          <li>Gooseneck sealed</li>
-          <li>Generator and weight labeling</li>
-          <li>Manifest / waste shipment record</li>
-          <li>Permitted asbestos disposal facility</li>
-        </ol>
-      </div>
       <div class="dcard free">
-        <h4>Non-regulated debris</h4>
+        <h4>Non-regulated · ≤ 1%</h4>
         <div class="trig">TRIGGER — 1% OR BELOW</div>
         <ol>
           <li>Double-bag plain poly — <strong>no</strong> asbestos labels or stickers</li>
-          <li>Regular construction debris landfill</li>
-          <li>No asbestos manifest required</li>
+          <li>Regular construction-debris landfill that accepts the material</li>
+          <li><strong>LA-area job → LA-area landfill</strong>; Ventura job → local site</li>
           <li>Keep the non-ACM letter with the load</li>
           <li>Check separately for lead — a TCLP may apply</li>
+        </ol>
+      </div>
+      <div class="dcard reg">
+        <h4>Friable · &gt; 1%</h4>
+        <div class="trig">TRIGGER — OVER 1%, FRIABLE</div>
+        <ol>
+          <li>Labeled 6-mil asbestos bags, double-bagged, gooseneck sealed</li>
+          <li>Generator + weight labeling, manifest / waste shipment record</li>
+          <li><strong>Kettleman Hills</strong> — friable-permitted facility</li>
+          <li><strong>10-day window</strong> — dispose within 10 days of removal (day 1 = removal day)</li>
+          <li>Advance notice to air district if ≥ 100 ft²</li>
+        </ol>
+      </div>
+      <div class="dcard nonfri">
+        <h4>Non-friable · &gt; 1%</h4>
+        <div class="trig">TRIGGER — OVER 1%, NON-FRIABLE</div>
+        <ol>
+          <li><strong>OSHA waste tracking</strong> — no asbestos hazard labels</li>
+          <li>Bag and keep intact — no grinding, sawing, breaking</li>
+          <li><strong>Simi Valley Landfill</strong> — accepts non-friable ACM</li>
+          <li>No 10-day disposal window</li>
+          <li>Advance notice to air district if ≥ 100 ft²</li>
         </ol>
       </div>
     </div>
     <div class="flag">
       <span class="ic">FIELD NOTE</span>
-      <p><strong>Common mix-up:</strong> asbestos-labeled bags, stickers, gooseneck, and manifest are for <strong>regulated material over 1%</strong> — friable or non-friable. On your typical under-1% jobs, do not use asbestos-labeled bags or stickers. Plain double-bag, regular debris. Labeling non-ACM waste as asbestos can get the load rejected or misrouted at the gate.</p>
+      <p><strong>Common mix-ups:</strong> asbestos labels, gooseneck, and manifest are for <strong>friable</strong> material — non-friable rides on <strong>OSHA waste tracking with no hazard labels</strong>. Under 1% is plain debris, but still dump an <strong>LA job's load at an LA-area landfill</strong>, not back in Ventura. And friable has a clock — <strong>10 days from removal to Kettleman.</strong></p>
     </div>
   </section>
 
@@ -545,6 +761,13 @@
         vTitle=document.getElementById('vTitle'),vLede=document.getElementById('vLede'),
         vRows=document.getElementById('vRows');
 
+  const rmGate=document.getElementById('rmGateVal');
+  const lanes={A:document.getElementById('laneA'),F:document.getElementById('laneF'),N:document.getElementById('laneN')};
+  const noticeF=document.getElementById('noticeF'),noticeN=document.getElementById('noticeN');
+  const segArea=document.querySelector('.seg[data-group="area"]'),
+        segFri=document.querySelector('.seg[data-group="friable"]');
+  const ctrlArea=segArea.closest('.ctrl'),ctrlFri=segFri.closest('.ctrl');
+
   const lvl=(el,l)=>{el.classList.remove('ok','warn','alert');el.classList.add(l)};
 
   function render(){
@@ -552,36 +775,76 @@
     let level,chipText,title,lede,rows;
     if(!reg){
       level='ok';chipText='Not regulated';title='Non-regulated debris';
-      lede='At or below 1% this is not regulated ACM. Area and friability trigger no air-district requirement. Disposal is regular construction debris.';
+      lede='At or below 1% this is not regulated ACM. Area and friability trigger no air-district requirement — disposal is regular construction debris.';
       rows=[
-        ['Status','Not regulated asbestos-containing material'],
-        ['Notification','None required based on content. Demolition of the structure itself may still require notice.'],
-        ['Work practices','Not mandated by content — but your IH or CAC can still direct Cal/OSHA controls: containment, wet methods, HEPA. Follow the directive.'],
-        ['Disposal','Double-bag plain poly, regular debris landfill. No asbestos labels, no manifest. Keep the non-ACM letter with the load.'],
-        ['Also check','Lead — evaluate separately. A TCLP may be needed on lead-paint debris.']
+        ['Status','Not regulated ACM — 1% or below.'],
+        ['Notification','None from content. Demolition of the structure itself may still require district notice.'],
+        ['Work practices','Not mandated by content — your IH or CAC can still direct Cal/OSHA controls (containment, wet methods, HEPA). Follow the directive.'],
+        ['Packaging','Plain double-bag poly. <strong>No</strong> asbestos labels, stickers, or manifest.'],
+        ['Disposal','Any regular construction-debris landfill <strong>that accepts the material</strong>. Keep the non-ACM lab letter with the load.'],
+        ['Dump location','Match the landfill to the job\'s jurisdiction — an <strong>LA-area job goes to an LA-area landfill</strong>, a Ventura job to a local site. Don\'t haul an LA load back to Ventura.'],
+        ['Also check','Lead — evaluate separately; a TCLP may be needed on lead-paint debris.']
       ];
     }else{
       const notify=state.area==='large';
+      const fri=state.friable==='friable';
       level=notify?'alert':'warn';chipText='Regulated ACM';
       title=notify?'Regulated · notification required':'Regulated · small-job exemption';
       lede=notify
         ?'Over 1% and 100 ft² or more — full regulation plus advance notification to the air district.'
         :'Over 1% but under 100 ft² — still fully regulated ACM with work practices and asbestos disposal, but exempt from advance notification.';
       rows=[
-        ['Status','Regulated asbestos-containing material, over 1%'],
+        ['Status',`Regulated ACM, over 1% — ${fri?'friable':'non-friable'}.`],
         ['Notification',notify
           ?'<strong>Required</strong> — file with the air district 10 working days before start.'
           :'Exempt from advance notice under 100 ft². The small-job exemption covers notification only — not handling or disposal.'],
         ['Work practices','Full Cal/OSHA asbestos controls — containment, negative air, wet methods, PPE, decon, air clearance.'],
-        ['Friability',state.friable==='friable'?'Friable — strictest disposal path.':'Non-friable — watch for methods that render it friable.'],
-        ['Disposal',state.friable==='friable'
-          ?'Friable path — labeled 6-mil bags, double-bagged, goosenecked, weight-labeled, manifested, permitted friable-asbestos facility.'
-          :'Non-friable path — bag and manifest, facilities accepting non-friable ACM. Keep intact; if your method makes it friable it moves to the friable path.']
+        ['Packaging',fri
+          ?'Labeled 6-mil bags, double-bagged, goosenecked, weight-labeled, manifest / waste shipment record.'
+          :'<strong>OSHA waste tracking only — no asbestos hazard labels.</strong> Bag and keep intact.'],
+        ['Destination',fri
+          ?'<strong>Kettleman Hills</strong> — permitted friable-asbestos facility.'
+          :'<strong>Simi Valley Landfill</strong> — accepts non-friable ACM.'],
+        ['Disposal window',fri
+          ?'<strong>10 days</strong> — must reach Kettleman within 10 days of removal (the day you pull it off site is day 1).'
+          :'No 10-day window — that deadline is friable-only. Keep intact; a method that makes it friable moves it to the Kettleman path.']
       ];
     }
     lvl(verdict,level);lvl(chip,level);
     chip.textContent=chipText;vTitle.textContent=title;vLede.textContent=lede;
     vRows.innerHTML=rows.map(r=>`<div class="row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
+    updateRoadmap();
+  }
+
+  function updateRoadmap(){
+    const reg=state.content==='over';
+    const notify=state.area==='large';
+    const active=!reg?'A':(state.friable==='friable'?'F':'N');
+
+    rmGate.textContent=reg?'> 1% — regulated ACM':'≤ 1% — not regulated';
+    rmGate.style.color=reg?'var(--alert)':'var(--ok)';
+
+    ['A','F','N'].forEach(k=>{
+      lanes[k].classList.toggle('active',k===active);
+      lanes[k].classList.toggle('dim',k!==active);
+    });
+
+    [noticeF,noticeN].forEach(b=>{
+      if(notify){
+        b.className='lane-badge b-notice';
+        b.innerHTML='<span class="bi">⚑ ADVANCE NOTICE</span><span>10 working days before start — file with the air district.</span>';
+      }else{
+        b.className='lane-badge b-muted';
+        b.innerHTML='<span class="bi">ADVANCE NOTICE</span><span>Under 100 ft² — exempt from advance notification.</span>';
+      }
+    });
+
+    // Below the 1% line, area + friability are moot — grey them out.
+    const off=!reg;
+    segArea.classList.toggle('is-off',off);ctrlArea.classList.toggle('is-off',off);
+    segFri.classList.toggle('is-off',off);ctrlFri.classList.toggle('is-off',off);
+    segArea.querySelectorAll('button').forEach(x=>x.disabled=off);
+    segFri.querySelectorAll('button').forEach(x=>x.disabled=off);
   }
 
   document.querySelectorAll('.seg').forEach(seg=>{

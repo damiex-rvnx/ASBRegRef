@@ -371,8 +371,8 @@
   /* ---------- process / topology map (pan + zoom) ---------- */
   .topo{position:relative;overflow:hidden;width:100%;cursor:grab;touch-action:pan-y;border-radius:12px;background:rgba(0,0,0,.12)}
   .topo.grabbing{cursor:grabbing}
-  .topo-stage{position:relative;width:1180px;height:440px;transform-origin:0 0;will-change:transform}
-  .topo-svg{position:absolute;inset:0;width:1180px;height:440px;overflow:visible;pointer-events:none}
+  .topo-stage{position:relative;width:1300px;height:440px;transform-origin:0 0}
+  .topo-svg{position:absolute;inset:0;width:1300px;height:440px;overflow:visible;pointer-events:none}
 
   .conn{fill:none;stroke:var(--line);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;transition:stroke .35s ease,opacity .35s ease}
   .conn.spine{stroke:var(--accent)}
@@ -563,70 +563,69 @@
         <div class="panel" id="panelMap">
           <div class="topo" id="topoViewport">
             <div class="topo-stage" id="topo">
-              <svg class="topo-svg" viewBox="0 0 1180 440" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <svg class="topo-svg" viewBox="0 0 1300 440" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                 <defs>
                   <filter id="g" x="-60%" y="-60%" width="220%" height="220%">
                     <feGaussianBlur stdDeviation="3.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                   </filter>
                 </defs>
                 <!-- spine: new job -> sampling -> 1% gate -->
-                <path class="conn spine flow" d="M180,156 H256"/>
-                <path class="conn spine flow" id="pSpine2" d="M412,156 H488"/>
-                <path class="conn spine flow" d="M656,156 H760"/>
-                <!-- ≤1% branch (up to debris) -->
-                <path class="conn g-a on flow" id="cDeb" d="M760,156 V78 H958"/>
-                <!-- >1% shared trunk (down, then bus to friability split) -->
-                <path class="conn g-share dim" id="cDown" d="M760,156 V234"/>
-                <path class="conn g-share dim" id="cBus" d="M760,234 H812"/>
-                <!-- friable branch -->
-                <path class="conn g-f dim" id="cKet" d="M812,234 H958"/>
-                <!-- non-friable branch (down to simi) -->
-                <path class="conn g-n dim" id="cDownN" d="M812,234 V380 H958"/>
+                <path class="conn spine flow" d="M184,156 H264"/>
+                <path class="conn spine flow" id="pSpine2" d="M424,156 H504"/>
+                <path class="conn spine flow" d="M676,156 H784"/>
+                <!-- ≤1% branch (up to debris) — rounded corner -->
+                <path class="conn g-a on flow" id="cDeb" d="M784,156 L784,90 Q784,78 796,78 L1086,78"/>
+                <!-- >1% shared trunk (down, rounded corner, then bus to friability split) -->
+                <path class="conn g-share dim" id="cShare" d="M784,156 L784,222 Q784,234 796,234 L950,234"/>
+                <!-- friable branch (straight into Kettleman) -->
+                <path class="conn g-f dim" id="cKet" d="M950,234 H1086"/>
+                <!-- non-friable branch (down to simi) — rounded corner -->
+                <path class="conn g-n dim" id="cDownN" d="M950,234 L950,368 Q950,380 962,380 L1086,380"/>
                 <!-- travelling packets -->
                 <circle class="pkt-c c-accent on" r="4.8"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#pSpine2"/></animateMotion></circle>
-                <circle class="pkt-c c-ok on" id="pkDeb" r="4.8"><animateMotion dur="2.5s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
-                <circle class="pkt-c c-accent" id="pkDown" r="4.8"><animateMotion dur="2s" repeatCount="indefinite"><mpath href="#cDown"/></animateMotion></circle>
+                <circle class="pkt-c c-ok on" id="pkDeb" r="4.8"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
+                <circle class="pkt-c c-accent" id="pkShare" r="4.8"><animateMotion dur="2.1s" repeatCount="indefinite"><mpath href="#cShare"/></animateMotion></circle>
                 <circle class="pkt-c c-alert" id="pkKet" r="4.8"><animateMotion dur="2s" repeatCount="indefinite"><mpath href="#cKet"/></animateMotion></circle>
                 <circle class="pkt-c c-warn" id="pkDownN" r="4.8"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#cDownN"/></animateMotion></circle>
               </svg>
 
-              <div class="tnode spine start" style="left:24px;top:106px;width:156px;height:100px">
+              <div class="tnode spine start" style="left:24px;top:106px;width:160px;height:100px">
                 <span class="sic"><svg viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9 4.5h6v3H9z"/><path d="M8.5 11.5h7M8.5 15h4.5"/></svg></span>
                 <div class="st">New job</div><div class="ss">removal identified</div>
               </div>
-              <div class="tnode spine" style="left:256px;top:106px;width:156px;height:100px">
+              <div class="tnode spine" style="left:264px;top:106px;width:160px;height:100px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M9.5 3h5M11 3v6.2L6.3 17.4A2 2 0 0 0 8 20.4h8a2 2 0 0 0 1.7-3L13 9.2V3"/><path d="M8.4 15h7.2"/></svg></span>
                 <div class="st">Sampling</div><div class="ss">lab test for asbestos</div>
               </div>
-              <div class="tnode spine gate" id="stageGate" style="left:488px;top:106px;width:168px;height:100px">
+              <div class="tnode spine gate" id="stageGate" style="left:504px;top:106px;width:172px;height:100px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 3.2 20.8 12 12 20.8 3.2 12z"/></svg></span>
                 <div class="st">1% gate</div><div class="ss" id="gateSub">≤ 1% · not regulated</div>
               </div>
 
-              <div class="tnode dest deb on" id="destDeb" style="left:958px;top:22px;width:214px;height:112px">
+              <div class="tnode dest deb on" id="destDeb" style="left:1086px;top:22px;width:214px;height:112px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5.4A1.4 1.4 0 0 1 10.9 4h2.2a1.4 1.4 0 0 1 1.4 1.4V7M6.5 7l.9 12.2a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L18.5 7"/><path d="M10.5 11v6M13.5 11v6"/></svg></span>
                 <div class="st">Debris landfill</div><div class="ss">≤ 1% · any accepting site</div>
               </div>
-              <div class="tnode dest ket dim" id="destKet" style="left:958px;top:176px;width:214px;height:116px">
+              <div class="tnode dest ket dim" id="destKet" style="left:1086px;top:176px;width:214px;height:116px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
                 <div class="st">Kettleman Hills</div><div class="ss">35251 Old Skyline Rd</div>
                 <a class="dlink" href="https://www.google.com/maps/search/?api=1&amp;query=35251+Old+Skyline+Road+Kettleman+City+CA+93239" target="_blank" rel="noopener">Directions ↗</a>
               </div>
-              <div class="tnode dest simi dim" id="destSimi" style="left:958px;top:322px;width:214px;height:116px">
+              <div class="tnode dest simi dim" id="destSimi" style="left:1086px;top:322px;width:214px;height:116px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
                 <div class="st">Simi Valley</div><div class="ss">2801 Madera Rd · call ahead</div>
                 <a class="dlink" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">Directions ↗</a>
               </div>
 
-              <span class="tpill on-ok" id="pillDeb" style="left:859px;top:78px">PLAIN DOUBLE-BAG</span>
-              <span class="tpill off dim" id="pillNotice" style="left:760px;top:196px">AQMD NOTICE</span>
-              <span class="tpill on-alert dim" id="pillKetPack" style="left:882px;top:200px">LABELS + MANIFEST</span>
-              <span class="tpill on-alert dim" id="pillKetWin" style="left:882px;top:234px">⚑ 10-DAY WINDOW</span>
-              <span class="tpill on-alert dim" id="pillKetCount" style="left:882px;top:268px">COUNT + WEIGH BAGS</span>
-              <span class="tpill on-warn dim" id="pillSimi" style="left:885px;top:380px">OSHA TRACKING · NO LABELS</span>
+              <span class="tpill on-ok" id="pillDeb" style="left:940px;top:78px">PLAIN DOUBLE-BAG</span>
+              <span class="tpill off dim" id="pillNotice" style="left:784px;top:196px">AQMD NOTICE</span>
+              <span class="tpill on-alert dim" id="pillKetPack" style="left:1018px;top:200px">LABELS + MANIFEST</span>
+              <span class="tpill on-alert dim" id="pillKetWin" style="left:1018px;top:234px">⚑ 10-DAY WINDOW</span>
+              <span class="tpill on-alert dim" id="pillKetCount" style="left:1018px;top:268px">COUNT + WEIGH BAGS</span>
+              <span class="tpill on-warn dim" id="pillSimi" style="left:1024px;top:380px">OSHA TRACKING · NO LABELS</span>
             </div>
           </div>
-          <div class="zoomhint">Shift&nbsp;+&nbsp;scroll to zoom · drag to pan</div>
+          <div class="zoomhint">Pinch or Shift&nbsp;+&nbsp;scroll to zoom · drag to pan</div>
         </div>
 
         <div class="panel" id="panelRead" hidden>
@@ -816,8 +815,8 @@
 
   const $=id=>document.getElementById(id);
   const stageGate=$('stageGate'),gateSub=$('gateSub');
-  const cDeb=$('cDeb'),cDown=$('cDown'),cBus=$('cBus'),cKet=$('cKet'),cDownN=$('cDownN');
-  const pkDeb=$('pkDeb'),pkDown=$('pkDown'),pkKet=$('pkKet'),pkDownN=$('pkDownN');
+  const cDeb=$('cDeb'),cShare=$('cShare'),cKet=$('cKet'),cDownN=$('cDownN');
+  const pkDeb=$('pkDeb'),pkShare=$('pkShare'),pkKet=$('pkKet'),pkDownN=$('pkDownN');
   const destDeb=$('destDeb'),destKet=$('destKet'),destSimi=$('destSimi');
   const pillDeb=$('pillDeb'),pillNotice=$('pillNotice'),pillKetPack=$('pillKetPack'),pillKetWin=$('pillKetWin'),pillKetCount=$('pillKetCount'),pillSimi=$('pillSimi');
   const setBranch=(el,grp,on)=>{el.setAttribute('class','conn '+grp+(on?' on flow':' dim'));};
@@ -890,8 +889,8 @@
     pillDeb.classList.toggle('dim',!aOn);
 
     // >1% shared trunk — the AQMD notice comes AFTER the % result
-    setBranch(cDown,'g-share',reg);setBranch(cBus,'g-share',reg);
-    pkDown.classList.toggle('on',reg);
+    setBranch(cShare,'g-share',reg);
+    pkShare.classList.toggle('on',reg);
     if(!reg){ setPill(pillNotice,'off AQMD','AQMD NOTICE');pillNotice.classList.add('dim'); }
     else{
       pillNotice.classList.remove('dim');
@@ -937,12 +936,12 @@
     v.setAttribute('aria-selected','true');
     const map=v.dataset.view==='map';
     panelMap.hidden=!map;panelRead.hidden=map;
-    viewHint.textContent=map?'Shift + scroll to zoom · drag to pan':'Full checklist for this job';
+    viewHint.textContent=map?'Pinch / Shift+scroll to zoom · drag to pan':'Full checklist for this job';
     if(map) requestAnimationFrame(fitMap);
   }));
 
-  // ---- route map: pan + zoom (shift + scroll) ----
-  const STAGE_W=1180, STAGE_H=440;
+  // ---- route map: pan + zoom (shift+scroll on desktop, pinch on touch) ----
+  const STAGE_W=1300, STAGE_H=440;
   const topoVP=document.getElementById('topoViewport'), topoStage=document.getElementById('topo');
   let zScale=1, zTx=0, zTy=0, zMin=1, zMax=1.8;
   const fitH=()=>STAGE_H*zMin;
@@ -955,28 +954,64 @@
   function applyMap(){ topoStage.style.transform=`translate(${zTx}px,${zTy}px) scale(${zScale})`; topoVP.style.height=fitH()+'px'; }
   function fitMap(){
     const vw=topoVP.clientWidth||STAGE_W;
-    zMin=Math.min(1, vw/STAGE_W); zMax=Math.max(zMin*1.9, 1.5);
+    // fit to width, but keep a floor so the map isn't microscopic on phones
+    // (below the floor it overflows and can be panned / pinch-zoomed).
+    zMin=Math.min(1, Math.max(0.4, vw/STAGE_W)); zMax=Math.max(zMin*2, 1.7);
     zScale=zMin; clampMap(); applyMap();
+  }
+  // zoom around a viewport-space point (vx,vy)
+  function zoomAt(vx,vy,factor){
+    const px=(vx-zTx)/zScale, py=(vy-zTy)/zScale;
+    zScale=Math.min(zMax,Math.max(zMin, zScale*factor));
+    zTx=vx-px*zScale; zTy=vy-py*zScale;
+    clampMap(); applyMap();
   }
   topoVP.addEventListener('wheel',e=>{
     if(!e.shiftKey) return;
     e.preventDefault();
     const r=topoVP.getBoundingClientRect();
     const d=Math.abs(e.deltaY)>=Math.abs(e.deltaX)?e.deltaY:e.deltaX;
-    const px=(e.clientX-r.left-zTx)/zScale, py=(e.clientY-r.top-zTy)/zScale;
-    zScale=Math.min(zMax,Math.max(zMin, zScale*(d<0?1.12:1/1.12)));
-    zTx=(e.clientX-r.left)-px*zScale; zTy=(e.clientY-r.top)-py*zScale;
-    clampMap(); applyMap();
+    zoomAt(e.clientX-r.left, e.clientY-r.top, d<0?1.12:1/1.12);
   },{passive:false});
-  let dragging=false;
+
+  // unified pointer handling: mouse drag to pan, two-finger pinch to zoom
+  const pointers=new Map();
+  let dragging=false, pinch=null;
+  const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   topoVP.addEventListener('pointerdown',e=>{
     if(e.target.closest('a')) return;
-    dragging=true; topoVP.classList.add('grabbing');
-    try{topoVP.setPointerCapture(e.pointerId);}catch(_){}
+    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pointers.size===1 && e.pointerType==='mouse'){
+      dragging=true; topoVP.classList.add('grabbing');
+      try{topoVP.setPointerCapture(e.pointerId);}catch(_){}
+    }
+    if(pointers.size===2){
+      dragging=false; topoVP.classList.remove('grabbing');
+      const [a,b]=[...pointers.values()], r=topoVP.getBoundingClientRect();
+      const mx=(a.x+b.x)/2-r.left, my=(a.y+b.y)/2-r.top;
+      pinch={d0:dist(a,b), s0:zScale, ax:(mx-zTx)/zScale, ay:(my-zTy)/zScale};
+    }
   });
-  topoVP.addEventListener('pointermove',e=>{ if(!dragging) return; zTx+=e.movementX; zTy+=e.movementY; clampMap(); applyMap(); });
-  const endDrag=()=>{ dragging=false; topoVP.classList.remove('grabbing'); };
-  topoVP.addEventListener('pointerup',endDrag); topoVP.addEventListener('pointercancel',endDrag);
+  topoVP.addEventListener('pointermove',e=>{
+    if(pointers.has(e.pointerId)) pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(pinch && pointers.size===2){
+      e.preventDefault();
+      const [a,b]=[...pointers.values()], r=topoVP.getBoundingClientRect();
+      const mx=(a.x+b.x)/2-r.left, my=(a.y+b.y)/2-r.top;
+      zScale=Math.min(zMax,Math.max(zMin, pinch.s0*(dist(a,b)/pinch.d0)));
+      zTx=mx-pinch.ax*zScale; zTy=my-pinch.ay*zScale;
+      clampMap(); applyMap();
+      return;
+    }
+    if(dragging && e.pointerType==='mouse'){ zTx+=e.movementX; zTy+=e.movementY; clampMap(); applyMap(); }
+  });
+  const dropPointer=e=>{
+    pointers.delete(e.pointerId);
+    if(pointers.size<2) pinch=null;
+    if(pointers.size===0){ dragging=false; topoVP.classList.remove('grabbing'); }
+  };
+  topoVP.addEventListener('pointerup',dropPointer);
+  topoVP.addEventListener('pointercancel',dropPointer);
   window.addEventListener('resize',()=>{ if(!panelMap.hidden) fitMap(); });
   fitMap();
 

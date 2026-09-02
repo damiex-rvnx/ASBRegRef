@@ -460,6 +460,28 @@
   .lnk{color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap}
   .lnk:hover{text-decoration:underline}
 
+  /* ---------- rule citations & caution surfaces ---------- */
+  .cite{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);letter-spacing:.02em;line-height:1.55;margin-top:7px}
+  .fact .cite{margin-top:9px}
+  .sop-tag{
+    display:inline-block;font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;
+    letter-spacing:.09em;text-transform:uppercase;color:var(--accent);
+    background:var(--accent-dim);border:1px solid var(--line-bright);border-radius:5px;
+    padding:2px 7px;margin-right:7px;vertical-align:middle;
+  }
+  .v-warn,.d-caution{
+    background:var(--warn-dim);border:1px solid var(--warn-line);border-radius:11px;
+    padding:14px 16px;font-size:13px;color:var(--text-2);line-height:1.55;
+  }
+  .v-warn{margin-top:18px}
+  .v-warn .wt,.d-caution .wt{
+    display:block;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--warn);margin-bottom:6px;
+  }
+  .v-warn strong,.d-caution strong{color:var(--warn)}
+  .v-warn[hidden]{display:none}
+  .d-caution{margin-top:14px}
+
   /* ---------- collapsible sections ---------- */
   .drop{border:1px solid var(--line);border-radius:var(--r);background:var(--surface-1);overflow:hidden}
   .drop>summary{list-style:none;cursor:pointer;padding:22px 24px;display:block;transition:background .18s ease}
@@ -502,11 +524,11 @@
 
   <section class="rise">
     <div class="sec-label">Start here</div>
-    <h2>The 1% gate controls everything</h2>
-    <p class="sec-sub">Nothing else matters until you clear this. Every threshold below only activates once the material is over the line.</p>
+    <h2>The 1% gate controls the disposal path</h2>
+    <p class="sec-sub">The 1% line decides regulated ACM, air-district notification, and how the waste is classified. It does <em>not</em> decide worker protection — Cal/OSHA starts far lower, at 0.1%.</p>
     <div class="gate">
       <span class="mark">&gt; 1%</span>
-      <p>Material is <strong>regulated asbestos-containing material (ACM)</strong> only when it tests <strong>greater than 1% asbestos</strong>. At or below 1% it is <strong>not regulated ACM</strong> — the friable question and the 100 ft² question trigger nothing, and the waste is not regulated asbestos waste. Cal/OSHA work practices can still be directed by your IH regardless of content.</p>
+      <p>Material is <strong>regulated asbestos-containing material (ACM)</strong> — for air-district notification and disposal classification — only when it tests <strong>greater than 1% asbestos</strong> by PLM. At or below 1% it is <strong>not regulated ACM</strong>: the friable question and the 100 ft² question trigger no air-district requirement, and the waste is not regulated asbestos waste. <strong>Cal/OSHA is a separate track</strong> — any material over <strong>0.1%</strong> is asbestos-containing construction material (ACCM) and worker-protection rules still apply. See the caution on the ≤ 1% route.<span class="cite">1% ACM: 40 CFR 61.141 · SCAQMD Rule 1403 · VCAPCD Rule 62.7 &nbsp;|&nbsp; 0.1% ACCM: Cal/OSHA 8 CCR 341.6, 1529</span></p>
     </div>
   </section>
 
@@ -638,6 +660,11 @@
             </div>
             <p class="v-lede" id="vLede"></p>
             <div class="rows" id="vRows"></div>
+            <div class="v-warn" id="vWarn" hidden>
+              <span class="wt">⚠ Cal/OSHA still applies below 1%</span>
+              Anything over <strong>0.1%</strong> is asbestos-containing construction material (ACCM). Contractor <strong>registration</strong> is required for asbestos-related work involving <strong>≥ 100 ft²</strong> of ACCM; below that a <strong>Report of Use</strong> applies. Worker-protection work practices under 8 CCR 1529 apply whenever an employee disturbs it — regardless of the 1% air-district line.
+              <span class="cite">Cal/OSHA 8 CCR 1529 · 341.6–341.14 (registration ≥ 100 ft²; Report of Use &lt; 100 ft²)</span>
+            </div>
           </div>
         </div>
       </div>
@@ -659,10 +686,11 @@
       <div class="d-top"><h3>South Coast AQMD</h3><span class="d-rule">RULE 1403</span></div>
       <div class="d-cities">LA County / Westside — West Hollywood, Beverly Hills, Century City, Culver City, Santa Monica, Marina del Rey, Venice</div>
       <div class="facts">
-        <div class="fact"><div class="lbl">ACM definition</div><span class="big">&gt; 1%</span><div class="txt">Asbestos by PLM</div></div>
-        <div class="fact"><div class="lbl">Notification trigger</div><span class="big">≥ 100 ft²</span><div class="txt">Regulated ACM, or any demolition</div></div>
-        <div class="fact"><div class="lbl">Advance notice</div><span class="big">10 days</span><div class="txt">Working days before start of work</div></div>
-        <div class="fact"><div class="lbl">Survey required</div><div class="txt">Yes — signed by CAC prior to demo/reno. Only exemption: single-unit dwelling under 100 ft²</div></div>
+        <div class="fact"><div class="lbl">ACM definition</div><span class="big">&gt; 1%</span><div class="txt">Asbestos by PLM</div><span class="cite">40 CFR 61.141 · Rule 1403</span></div>
+        <div class="fact"><div class="lbl">Notification trigger</div><span class="big">≥ 100 ft²</span><div class="txt">or ≥ 100 linear ft, or ≥ 35 ft³ where it couldn't be measured before stripping; regulated ACM or any demolition</div><span class="cite">Rule 1403 · cu-ft basis 40 CFR 61.145(a)</span></div>
+        <div class="fact"><div class="lbl">Advance notice</div><span class="big">10 days</span><div class="txt">Working days before start of work</div><span class="cite">Rule 1403(d)</span></div>
+        <div class="fact"><div class="lbl">Survey required</div><div class="txt">Yes — signed by CAC prior to demo/reno. Only exemption: single-unit dwelling under 100 ft²</div><span class="cite">Rule 1403 · verify exemption subsection</span></div>
+        <div class="fact"><div class="lbl">Filing fee</div><div class="txt">By project size (eff. 7/1/2025); late-handling $81.61 if filed &lt; 14 days out; planned-reno review $916.15. Verify current tiers.</div><span class="cite">Rule 301(o) · r1403-fees.pdf</span></div>
       </div>
       <a class="d-link" href="https://www.aqmd.gov/docs/default-source/rule-book/reg-xiv/rule-1403.pdf" target="_blank" rel="noopener">Rule 1403 full text</a>
     </div>
@@ -671,10 +699,10 @@
       <div class="d-top"><h3>Antelope Valley AQMD</h3><span class="d-rule">RULE 1403</span></div>
       <div class="d-cities">Northern LA County high desert — Lancaster, Palmdale and surrounding areas</div>
       <div class="facts">
-        <div class="fact"><div class="lbl">ACM definition</div><span class="big">&gt; 1%</span><div class="txt">Same as South Coast</div></div>
-        <div class="fact"><div class="lbl">Notification trigger</div><span class="big">≥ 100 ft²</span><div class="txt">Regulated ACM, or any demolition</div></div>
-        <div class="fact"><div class="lbl">Advance notice</div><span class="big">10 days</span><div class="txt">Working days before start of work</div></div>
-        <div class="fact"><div class="lbl">Note</div><div class="txt">AVAQMD adopted a Rule 1403 essentially identical to South Coast's. File with AVAQMD, not SCAQMD.</div></div>
+        <div class="fact"><div class="lbl">ACM definition</div><span class="big">&gt; 1%</span><div class="txt">Same as South Coast</div><span class="cite">40 CFR 61.141 · AVAQMD Rule 1403</span></div>
+        <div class="fact"><div class="lbl">Notification trigger</div><span class="big">≥ 100 ft²</span><div class="txt">or ≥ 100 linear ft, or ≥ 35 ft³ where it couldn't be measured; regulated ACM or any demolition</div><span class="cite">AVAQMD Rule 1403 · cu-ft 40 CFR 61.145(a)</span></div>
+        <div class="fact"><div class="lbl">Advance notice</div><span class="big">10 days</span><div class="txt">Working days before start of work</div><span class="cite">AVAQMD Rule 1403</span></div>
+        <div class="fact"><div class="lbl">Note</div><div class="txt">AVAQMD adopted a Rule 1403 essentially identical to South Coast's. File with AVAQMD, not SCAQMD. Confirm AVAQMD's own filing fee.</div><span class="cite">verify AVAQMD fee schedule</span></div>
       </div>
       <a class="d-link" href="https://ww2.arb.ca.gov/sites/default/files/classic/technology-clearinghouse/rules/RuleID302.pdf" target="_blank" rel="noopener">AVAQMD Rule 1403</a>
     </div>
@@ -683,9 +711,10 @@
       <div class="d-top"><h3>Ventura County APCD</h3><span class="d-rule">RULE 62.7</span></div>
       <div class="d-cities">Home turf — Ventura, Oxnard, Camarillo, Thousand Oaks, Simi Valley, Moorpark</div>
       <div class="facts">
-        <div class="fact"><div class="lbl">ACM definition</div><span class="big">&gt; 1%</span><div class="txt">Asbestos by PLM</div></div>
-        <div class="fact"><div class="lbl">Notification trigger</div><span class="big">≥ 100 ft²</span><div class="txt">ACM removed, or any demolition</div></div>
-        <div class="fact"><div class="lbl">Advance notice</div><span class="big">10 days</span><div class="txt">Working days, postmarked or delivered</div></div>
+        <div class="fact"><div class="lbl">ACM definition</div><span class="big">&gt; 1%</span><div class="txt">Asbestos by PLM</div><span class="cite">40 CFR 61.141 · Rule 62.7</span></div>
+        <div class="fact"><div class="lbl">Notification trigger</div><span class="big">≥ 100 ft²</span><div class="txt">or ≥ 100 linear ft, or ≥ 35 ft³ where it couldn't be measured; ACM removed or any demolition</div><span class="cite">Rule 62.7 · cu-ft basis 40 CFR 61.145(a)</span></div>
+        <div class="fact"><div class="lbl">Advance notice</div><span class="big">10 days</span><div class="txt">Working days, postmarked or delivered — form ENF-62 (ENF-62R residential)</div><span class="cite">Rule 62.7</span></div>
+        <div class="fact"><div class="lbl">Notification fee</div><div class="txt">$289.38 (100–&lt;1,000 ft²) · $690.06 (1,000–&lt;5,000) · $1,085.17 (5,000+ ft²). No fee for residential ≤ 4 units. Fees change annually — verify.</div><span class="cite">Rule 45.2 · vcapcd.org/asbestos</span></div>
         <div class="fact"><div class="lbl">Framework</div><div class="txt">Rule 62.7 implements the federal Asbestos NESHAP locally — same 1% / 100 ft² logic.</div></div>
       </div>
       <a class="d-link" href="https://www.vcapcd.org/asbestos/" target="_blank" rel="noopener">VCAPCD asbestos program</a>
@@ -716,7 +745,8 @@
             <li>Generator info and weight labeling</li>
             <li>Waste shipment record / manifest with the load</li>
             <li><strong>Destination — Kettleman Hills</strong>, friable-permitted facility</li>
-            <li><strong>10-day window</strong> — dispose within 10 days of removal (removal day = day 1)</li>
+            <!-- TODO: confirm the 10-day disposal window against Kettleman Hills (Chemical Waste Management) acceptance criteria — not found in Rule 1403, Rule 62.7, or 40 CFR 61 Subpart M -->
+            <li><span class="sop-tag">Kustom SOP</span>get to Kettleman within 10 days of removal (day 1 = removal day) — company/facility practice, not district rule</li>
           </ul>
         </div>
       </div>
@@ -725,11 +755,11 @@
         <div class="body">
           <p class="desc">Intact, bonded material that won't release fibers under hand pressure. Some floor tile, mastic, roofing, transite.</p>
           <ul>
-            <li>Still regulated ACM above 1%, but <strong>OSHA waste tracking only — no asbestos hazard labels</strong></li>
+            <li>Still regulated ACM above 1% — asbestos <strong>container warning labels per 8 CCR 1529(k)</strong> + waste tracking</li>
             <li>Keep intact — don't grind, saw, or break</li>
-            <li><strong>Destination — Simi Valley Landfill</strong>, accepts non-friable ACM</li>
-            <li><strong>No 10-day window</strong> — no disposal deadline like friable</li>
-            <li>Category I vs II distinctions can apply</li>
+            <li><strong>Destination — Simi Valley Landfill</strong>, accepts non-friable ACM (confirm its acceptance labeling)</li>
+            <li>No <span class="sop-tag">Kustom SOP</span>disposal-window applies to non-friable</li>
+            <li><strong>Category I</strong> (packagings, gaskets, resilient floor tile, asphalt roofing) resists fiber release; <strong>Category II</strong> (transite and other cement products) can release fibers once crushed — treat crushed Cat II as friable</li>
           </ul>
         </div>
       </div>
@@ -755,7 +785,7 @@
     <div class="disp">
       <div class="dcard free">
         <h4>Non-regulated · ≤ 1%</h4>
-        <div class="trig">TRIGGER — 1% OR BELOW</div>
+        <div class="trig">TRIGGER — 1% OR BELOW (air-district &amp; disposal)</div>
         <ol>
           <li>Double-bag plain poly — <strong>no</strong> asbestos labels or stickers</li>
           <li>Any construction-debris landfill that accepts the material</li>
@@ -763,6 +793,11 @@
           <li>Keep the non-ACM letter with the load</li>
           <li>Check separately for lead — a TCLP may apply</li>
         </ol>
+        <div class="d-caution">
+          <span class="wt">⚠ Cal/OSHA still applies below 1%</span>
+          Over <strong>0.1%</strong> is ACCM: registration for <strong>≥ 100 ft²</strong>, Report of Use below that, and 8 CCR 1529 work practices when disturbed.
+          <span class="cite">Cal/OSHA 8 CCR 1529 · 341.6–341.14</span>
+        </div>
       </div>
       <div class="dcard reg">
         <h4>Friable · &gt; 1%</h4>
@@ -772,26 +807,27 @@
           <li>Generator + weight labeling, manifest / waste shipment record</li>
           <li><strong>Kettleman Hills</strong> — friable-permitted facility</li>
           <li>35251 Old Skyline Rd, Kettleman City 93239 · <a class="lnk" href="https://www.google.com/maps/search/?api=1&amp;query=35251+Old+Skyline+Road+Kettleman+City+CA+93239" target="_blank" rel="noopener">Directions ↗</a></li>
-          <li><strong>10-day window</strong> — dispose within 10 days of removal (day 1 = removal day)</li>
-          <li>Advance notice to air district if ≥ 100 ft²</li>
+          <!-- TODO: confirm the 10-day disposal window against Kettleman Hills acceptance criteria — no basis found in Rule 1403 / Rule 62.7 / 40 CFR 61 Subpart M -->
+          <li><span class="sop-tag">Kustom SOP</span>get to Kettleman within 10 days of removal (day 1 = removal) — company/facility practice, not district rule</li>
+          <li>Advance notice to air district if ≥ 100 ft² / 100 lf / 35 ft³ <span class="cite">Rule 1403 · Rule 62.7 · cu-ft basis 40 CFR 61.145(a)</span></li>
         </ol>
       </div>
       <div class="dcard nonfri">
         <h4>Non-friable · &gt; 1%</h4>
         <div class="trig">TRIGGER — OVER 1%, NON-FRIABLE</div>
         <ol>
-          <li><strong>OSHA waste tracking</strong> — no asbestos hazard labels</li>
+          <li>Asbestos <strong>container warning labels per 8 CCR 1529(k)</strong> + waste tracking</li>
           <li>Bag and keep intact — no grinding, sawing, breaking</li>
-          <li><strong>Simi Valley Landfill</strong> — accepts non-friable ACM</li>
+          <li><strong>Simi Valley Landfill</strong> — accepts non-friable ACM (confirm acceptance labeling)</li>
           <li>2801 Madera Rd, Simi Valley 93065 · call ahead / pre-approval · <a class="lnk" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">Directions ↗</a></li>
-          <li>No 10-day disposal window</li>
-          <li>Advance notice to air district if ≥ 100 ft²</li>
+          <li>No <span class="sop-tag">Kustom SOP</span>disposal-window for non-friable</li>
+          <li>Advance notice to air district if ≥ 100 ft² / 100 lf / 35 ft³ <span class="cite">Rule 1403 · Rule 62.7 · cu-ft basis 40 CFR 61.145(a)</span></li>
         </ol>
       </div>
     </div>
     <div class="flag">
       <span class="ic">FIELD NOTE</span>
-      <p><strong>Common mix-ups:</strong> asbestos labels, gooseneck, and manifest are for <strong>friable</strong> material — non-friable rides on <strong>OSHA waste tracking with no hazard labels</strong>. Under 1% is plain debris — dump at any landfill that accepts it (LA loads are often trucked to Ventura and dumped once the truck's full). And friable has a clock — <strong>10 days from removal to Kettleman.</strong></p>
+      <p><strong>Common mix-ups:</strong> gooseneck and manifest are for <strong>friable</strong> material, but both friable and non-friable asbestos waste need <strong>container warning labels under 8 CCR 1529(k)</strong>. Under 1% is plain debris for the air district and landfill — but over 0.1% it's still ACCM for Cal/OSHA. And the <strong>10-day-to-Kettleman clock is a <span class="sop-tag">Kustom SOP</span></strong>, not a district rule — confirm it against the facility.</p>
     </div>
     </div>
    </details>
@@ -800,7 +836,8 @@
   <footer>
     <p>
       <span class="src">Kustom Ventura Division · PM / Superintendent field reference</span><br>
-      Sources: SCAQMD Rule 1403 · AVAQMD Rule 1403 · VCAPCD Rule 62.7 / federal Asbestos NESHAP · Cal/OSHA 8 CCR 1529<br><br>
+      Sources: SCAQMD / AVAQMD Rule 1403 · VCAPCD Rule 62.7 &amp; Rule 45.2 · 40 CFR 61 Subpart M (Asbestos NESHAP) · Cal/OSHA 8 CCR 1529, 341.6–341.14<br>
+      <span class="src">Last verified: 2026-09-02.</span> The 10-day disposal window is a Kustom SOP / facility requirement, not a district rule. Fees change annually — confirm current amounts before filing.<br><br>
       General regulatory reference, not a compliance determination. Defer to your project's industrial hygienist / CAC directive, current rule text, and the receiving facility's acceptance criteria. Thresholds and notification windows change — verify against the linked district rules before filing.
     </p>
   </footer>
@@ -810,7 +847,7 @@
   const state={content:'under',area:'small',friable:'friable'};
   const verdict=document.getElementById('verdict'),chip=document.getElementById('chip'),
         vTitle=document.getElementById('vTitle'),vLede=document.getElementById('vLede'),
-        vRows=document.getElementById('vRows');
+        vRows=document.getElementById('vRows'),vWarn=document.getElementById('vWarn');
 
   const MAP_KETTLEMAN='https://www.google.com/maps/search/?api=1&query=35251+Old+Skyline+Road+Kettleman+City+CA+93239';
   const MAP_SIMI='https://www.google.com/maps/search/?api=1&query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065';
@@ -860,18 +897,19 @@
         ['Work practices','Full Cal/OSHA asbestos controls — containment, negative air, wet methods, PPE, decon, air clearance.'],
         ['Packaging',fri
           ?'Labeled 6-mil bags, double-bagged, goosenecked, weight-labeled, manifest / waste shipment record.'
-          :'<strong>OSHA waste tracking only — no asbestos hazard labels.</strong> Bag and keep intact.'],
+          :'Asbestos <strong>container warning labels per 8 CCR 1529(k)</strong> + waste tracking. Bag and keep intact — confirm the receiving facility\'s own acceptance labeling.'],
         ['Destination',fri
           ?`<strong>Kettleman Hills</strong> — 35251 Old Skyline Rd, Kettleman City 93239. <a class="lnk" href="${MAP_KETTLEMAN}" target="_blank" rel="noopener">Directions ↗</a>`
           :`<strong>Simi Valley Landfill</strong> — 2801 Madera Rd, Simi Valley 93065. Call ahead / pre-approval. <a class="lnk" href="${MAP_SIMI}" target="_blank" rel="noopener">Directions ↗</a>`],
         ['Disposal window',fri
-          ?'<strong>10 days</strong> — must reach Kettleman within 10 days of removal (the day you pull it off site is day 1).'
-          :'No 10-day window — that deadline is friable-only. Keep intact; a method that makes it friable moves it to the Kettleman path.']
+          ?'<span class="sop-tag">Kustom SOP</span>Get it to Kettleman within 10 days of removal (day 1 = removal day). Company/facility practice — <strong>not</strong> district rule text. Confirm against Kettleman Hills acceptance criteria.'
+          :'No Kustom disposal-window SOP for non-friable.']
       ];
     }
     lvl(verdict,level);lvl(chip,level);
     chip.textContent=chipText;vTitle.textContent=title;vLede.textContent=lede;
     vRows.innerHTML=rows.map(r=>`<div class="row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
+    vWarn.hidden=reg; // Cal/OSHA 0.1% caution shows on the ≤1% route
     updateRoadmap();
   }
 

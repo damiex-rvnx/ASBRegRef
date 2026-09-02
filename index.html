@@ -368,10 +368,11 @@
   .readout{border-top:0}
   .panel[hidden]{display:none}
 
-  /* ---------- process / topology map ---------- */
-  .topo{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding:8px 0 6px}
-  .topo-stage{position:relative;width:950px;height:400px;margin:0 auto}
-  .topo-svg{position:absolute;inset:0;width:950px;height:400px;overflow:visible;pointer-events:none}
+  /* ---------- process / topology map (pan + zoom) ---------- */
+  .topo{position:relative;overflow:hidden;width:100%;cursor:grab;touch-action:pan-y;border-radius:12px;background:rgba(0,0,0,.12)}
+  .topo.grabbing{cursor:grabbing}
+  .topo-stage{position:relative;width:1180px;height:440px;transform-origin:0 0;will-change:transform}
+  .topo-svg{position:absolute;inset:0;width:1180px;height:440px;overflow:visible;pointer-events:none}
 
   .conn{fill:none;stroke:var(--line);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;transition:stroke .35s ease,opacity .35s ease}
   .conn.spine{stroke:var(--accent)}
@@ -388,20 +389,25 @@
   .pkt-c.c-accent{fill:var(--accent)} .pkt-c.c-ok{fill:var(--ok)} .pkt-c.c-alert{fill:var(--alert)} .pkt-c.c-warn{fill:var(--warn)}
 
   .tnode{
-    position:absolute;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;
-    padding:10px 12px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    position:absolute;background:var(--surface-2);border:1px solid var(--line);border-radius:13px;
+    padding:12px 14px;display:flex;flex-direction:column;align-items:center;justify-content:center;
     text-align:center;gap:2px;
     transition:border-color .35s ease,box-shadow .35s ease,opacity .35s ease,filter .35s ease,transform .35s ease;
   }
-  .tnode .sic{font-size:20px;line-height:1;margin-bottom:3px}
-  .tnode .st{font-size:13px;font-weight:700;color:var(--text);line-height:1.2}
-  .tnode .ss{font-size:10px;color:var(--text-3);font-family:'JetBrains Mono',monospace;line-height:1.35;letter-spacing:.01em}
+  .tnode .sic{display:flex;align-items:center;justify-content:center;margin-bottom:5px}
+  .tnode .sic svg{width:23px;height:23px;fill:none;stroke:var(--text-2);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .tnode.start .sic svg,.tnode.spine .sic svg{stroke:var(--accent)}
+  .tnode.gate .sic svg{stroke:var(--accent)}
+  .tnode.gate.reg .sic svg{stroke:var(--alert)}
+  .tnode.dest .sic svg{stroke:var(--dc)}
+  .tnode .st{font-size:13.5px;font-weight:700;color:var(--text);line-height:1.2}
+  .tnode .ss{font-size:10px;color:var(--text-3);font-family:'JetBrains Mono',monospace;line-height:1.4;letter-spacing:.01em}
   .tnode.spine{border-color:var(--line-bright)}
-  .tnode.start .sic{filter:drop-shadow(0 0 7px var(--accent))}
+  .tnode.start .sic svg{filter:drop-shadow(0 0 6px var(--accent))}
   .tnode.gate.reg{border-color:var(--alert)}
   .tnode.gate.reg .ss{color:var(--alert)}
   .tnode.dim{opacity:.3;filter:grayscale(.85)}
-  .tnode.dest{--dc:var(--line)}
+  .tnode.dest{--dc:var(--line);padding:15px 17px}
   .tnode.dest.deb{--dc:var(--ok)} .tnode.dest.ket{--dc:var(--alert)} .tnode.dest.simi{--dc:var(--warn)}
   .tnode.dest{border-color:var(--dc)}
   .tnode.dest.on{
@@ -409,26 +415,45 @@
     transform-box:fill-box;transform-origin:center;animation:destpulse 2.3s ease-in-out infinite;
   }
   @keyframes destpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.02)}}
-  .tnode.dest .st{font-size:14.5px}
-  .tnode.dest .ss{font-size:10.5px;color:var(--text-2);margin-top:2px}
-  .dlink{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--dc);text-decoration:none;letter-spacing:.04em}
+  .tnode.dest .st{font-size:15.5px;margin-top:1px}
+  .tnode.dest .ss{font-size:11px;color:var(--text-2);margin-top:3px}
+  .dlink{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:var(--dc);text-decoration:none;letter-spacing:.04em}
   .dlink:hover{text-decoration:underline}
 
   .tpill{
     position:absolute;transform:translate(-50%,-50%);z-index:3;
     font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;letter-spacing:.03em;
-    padding:5px 8px;border-radius:6px;border:1px solid var(--line);background:var(--surface-3);color:var(--text-2);
+    padding:5px 9px;border-radius:6px;border:1px solid var(--line);background:var(--surface-3);color:var(--text-2);
     text-align:center;line-height:1.2;white-space:nowrap;
     transition:opacity .35s ease,filter .35s ease,background .3s ease,color .3s ease;
   }
-  .tpill.dim{opacity:.28;filter:grayscale(.8)}
+  .tpill.dim{opacity:.26;filter:grayscale(.8)}
   .tpill.on-alert{background:var(--alert);color:#04141a;border-color:var(--alert)}
   .tpill.on-warn{background:var(--warn);color:#04141a;border-color:var(--warn)}
   .tpill.on-ok{background:var(--ok);color:#04141a;border-color:var(--ok)}
   .tpill.off{background:var(--surface-3);color:var(--text-3);border-color:var(--line)}
 
-  .toposcroll{display:none;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);text-align:center;margin-top:6px;letter-spacing:.04em}
-  @media(max-width:1090px){.toposcroll{display:block}}
+  .zoomhint{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);text-align:center;margin-top:8px;letter-spacing:.04em}
+
+  /* expand / fullscreen */
+  .vb-right{display:flex;align-items:center;gap:14px}
+  .expandbtn{
+    display:inline-flex;align-items:center;justify-content:center;gap:6px;
+    width:34px;height:34px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--line);background:var(--surface-2);color:var(--text-2);
+    transition:all .18s ease;flex-shrink:0;
+  }
+  .expandbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .expandbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .expandbtn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .expandbtn .i-collapse{display:none}
+  .tool.is-expanded{
+    position:fixed;inset:0;z-index:1200;margin:0;max-width:none;border-radius:0;
+    overflow:auto;background:var(--bg);padding:6px 20px 40px;
+  }
+  .tool.is-expanded .expandbtn .i-expand{display:none}
+  .tool.is-expanded .expandbtn .i-collapse{display:block}
+  body.noscroll{overflow:hidden}
 
   .lnk{color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap}
   .lnk:hover{text-decoration:underline}
@@ -525,70 +550,83 @@
           <button role="tab" aria-selected="true" data-view="map">◺ Route map</button>
           <button role="tab" aria-selected="false" data-view="read">☰ Readout</button>
         </div>
-        <div class="viewhint" id="viewHint">Watch the load travel its route</div>
+        <div class="vb-right">
+          <span class="viewhint" id="viewHint">Watch the load travel its route</span>
+          <button class="expandbtn" id="expandBtn" aria-label="Expand to full screen" title="Expand to full screen">
+            <svg class="i-expand" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4M16 3h4a1 1 0 0 1 1 1v4M8 21H4a1 1 0 0 1-1-1v-4M16 21h4a1 1 0 0 0 1-1v-4"/></svg>
+            <svg class="i-collapse" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h5V3M21 8h-5V3M3 16h5v5M21 16h-5v5"/></svg>
+          </button>
+        </div>
       </div>
 
       <div class="readout">
         <div class="panel" id="panelMap">
-          <div class="topo">
+          <div class="topo" id="topoViewport">
             <div class="topo-stage" id="topo">
-              <svg class="topo-svg" viewBox="0 0 950 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <svg class="topo-svg" viewBox="0 0 1180 440" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                 <defs>
                   <filter id="g" x="-60%" y="-60%" width="220%" height="220%">
                     <feGaussianBlur stdDeviation="3.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                   </filter>
                 </defs>
-                <!-- spine: new job -> haz test -> 1% gate -->
-                <path class="conn spine flow" d="M130,130 H160"/>
-                <path class="conn spine flow" id="pSpine2" d="M282,130 H312"/>
-                <path class="conn spine flow" d="M450,130 H516"/>
+                <!-- spine: new job -> sampling -> 1% gate -->
+                <path class="conn spine flow" d="M180,156 H256"/>
+                <path class="conn spine flow" id="pSpine2" d="M412,156 H488"/>
+                <path class="conn spine flow" d="M656,156 H760"/>
                 <!-- ≤1% branch (up to debris) -->
-                <path class="conn g-a on flow" id="cDeb" d="M516,130 V58 H760"/>
+                <path class="conn g-a on flow" id="cDeb" d="M760,156 V78 H958"/>
                 <!-- >1% shared trunk (down, then bus to friability split) -->
-                <path class="conn g-share dim" id="cDown" d="M516,130 V228"/>
-                <path class="conn g-share dim" id="cBus" d="M516,228 H588"/>
+                <path class="conn g-share dim" id="cDown" d="M760,156 V234"/>
+                <path class="conn g-share dim" id="cBus" d="M760,234 H812"/>
                 <!-- friable branch -->
-                <path class="conn g-f dim" id="cKet" d="M588,228 H760"/>
+                <path class="conn g-f dim" id="cKet" d="M812,234 H958"/>
                 <!-- non-friable branch (down to simi) -->
-                <path class="conn g-n dim" id="cDownN" d="M588,228 V345 H760"/>
+                <path class="conn g-n dim" id="cDownN" d="M812,234 V380 H958"/>
                 <!-- travelling packets -->
-                <circle class="pkt-c c-accent on" r="4.5"><animateMotion dur="1.5s" repeatCount="indefinite"><mpath href="#pSpine2"/></animateMotion></circle>
-                <circle class="pkt-c c-ok on" id="pkDeb" r="4.5"><animateMotion dur="2.3s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
-                <circle class="pkt-c c-accent" id="pkDown" r="4.5"><animateMotion dur="1.9s" repeatCount="indefinite"><mpath href="#cDown"/></animateMotion></circle>
-                <circle class="pkt-c c-alert" id="pkKet" r="4.5"><animateMotion dur="1.9s" repeatCount="indefinite"><mpath href="#cKet"/></animateMotion></circle>
-                <circle class="pkt-c c-warn" id="pkDownN" r="4.5"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#cDownN"/></animateMotion></circle>
+                <circle class="pkt-c c-accent on" r="4.8"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#pSpine2"/></animateMotion></circle>
+                <circle class="pkt-c c-ok on" id="pkDeb" r="4.8"><animateMotion dur="2.5s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
+                <circle class="pkt-c c-accent" id="pkDown" r="4.8"><animateMotion dur="2s" repeatCount="indefinite"><mpath href="#cDown"/></animateMotion></circle>
+                <circle class="pkt-c c-alert" id="pkKet" r="4.8"><animateMotion dur="2s" repeatCount="indefinite"><mpath href="#cKet"/></animateMotion></circle>
+                <circle class="pkt-c c-warn" id="pkDownN" r="4.8"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#cDownN"/></animateMotion></circle>
               </svg>
 
-              <div class="tnode spine start" style="left:8px;top:86px;width:122px;height:88px">
-                <span class="sic">🏗️</span><div class="st">New job</div><div class="ss">removal identified</div>
+              <div class="tnode spine start" style="left:24px;top:106px;width:156px;height:100px">
+                <span class="sic"><svg viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9 4.5h6v3H9z"/><path d="M8.5 11.5h7M8.5 15h4.5"/></svg></span>
+                <div class="st">New job</div><div class="ss">removal identified</div>
               </div>
-              <div class="tnode spine" style="left:160px;top:86px;width:122px;height:88px">
-                <span class="sic">🧪</span><div class="st">Haz-mat test</div><div class="ss">sample for asbestos</div>
+              <div class="tnode spine" style="left:256px;top:106px;width:156px;height:100px">
+                <span class="sic"><svg viewBox="0 0 24 24"><path d="M9.5 3h5M11 3v6.2L6.3 17.4A2 2 0 0 0 8 20.4h8a2 2 0 0 0 1.7-3L13 9.2V3"/><path d="M8.4 15h7.2"/></svg></span>
+                <div class="st">Sampling</div><div class="ss">lab test for asbestos</div>
               </div>
-              <div class="tnode spine gate" id="stageGate" style="left:312px;top:86px;width:138px;height:88px">
-                <span class="sic">◆</span><div class="st">1% gate</div><div class="ss" id="gateSub">≤ 1% · not regulated</div>
+              <div class="tnode spine gate" id="stageGate" style="left:488px;top:106px;width:168px;height:100px">
+                <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 3.2 20.8 12 12 20.8 3.2 12z"/></svg></span>
+                <div class="st">1% gate</div><div class="ss" id="gateSub">≤ 1% · not regulated</div>
               </div>
 
-              <div class="tnode dest deb on" id="destDeb" style="left:760px;top:11px;width:182px;height:94px">
-                <span class="sic">🗑️</span><div class="st">Debris landfill</div><div class="ss">≤ 1% · any accepting site</div>
+              <div class="tnode dest deb on" id="destDeb" style="left:958px;top:22px;width:214px;height:112px">
+                <span class="sic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5.4A1.4 1.4 0 0 1 10.9 4h2.2a1.4 1.4 0 0 1 1.4 1.4V7M6.5 7l.9 12.2a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L18.5 7"/><path d="M10.5 11v6M13.5 11v6"/></svg></span>
+                <div class="st">Debris landfill</div><div class="ss">≤ 1% · any accepting site</div>
               </div>
-              <div class="tnode dest ket dim" id="destKet" style="left:760px;top:181px;width:182px;height:94px">
-                <span class="sic">📍</span><div class="st">Kettleman Hills</div><div class="ss">35251 Old Skyline Rd</div>
+              <div class="tnode dest ket dim" id="destKet" style="left:958px;top:176px;width:214px;height:116px">
+                <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
+                <div class="st">Kettleman Hills</div><div class="ss">35251 Old Skyline Rd</div>
                 <a class="dlink" href="https://www.google.com/maps/search/?api=1&amp;query=35251+Old+Skyline+Road+Kettleman+City+CA+93239" target="_blank" rel="noopener">Directions ↗</a>
               </div>
-              <div class="tnode dest simi dim" id="destSimi" style="left:760px;top:298px;width:182px;height:94px">
-                <span class="sic">📍</span><div class="st">Simi Valley</div><div class="ss">2801 Madera Rd · call ahead</div>
+              <div class="tnode dest simi dim" id="destSimi" style="left:958px;top:322px;width:214px;height:116px">
+                <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
+                <div class="st">Simi Valley</div><div class="ss">2801 Madera Rd · call ahead</div>
                 <a class="dlink" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">Directions ↗</a>
               </div>
 
-              <span class="tpill on-ok" id="pillDeb" style="left:638px;top:58px">PLAIN DOUBLE-BAG</span>
-              <span class="tpill off dim" id="pillNotice" style="left:516px;top:179px">AQMD NOTICE</span>
-              <span class="tpill on-alert dim" id="pillKetPack" style="left:674px;top:210px">LABELS + MANIFEST</span>
-              <span class="tpill on-alert dim" id="pillKetWin" style="left:674px;top:246px">⚑ 10-DAY WINDOW</span>
-              <span class="tpill on-warn dim" id="pillSimi" style="left:674px;top:345px">OSHA TRACKING · NO LABELS</span>
+              <span class="tpill on-ok" id="pillDeb" style="left:859px;top:78px">PLAIN DOUBLE-BAG</span>
+              <span class="tpill off dim" id="pillNotice" style="left:760px;top:196px">AQMD NOTICE</span>
+              <span class="tpill on-alert dim" id="pillKetPack" style="left:882px;top:200px">LABELS + MANIFEST</span>
+              <span class="tpill on-alert dim" id="pillKetWin" style="left:882px;top:234px">⚑ 10-DAY WINDOW</span>
+              <span class="tpill on-alert dim" id="pillKetCount" style="left:882px;top:268px">COUNT + WEIGH BAGS</span>
+              <span class="tpill on-warn dim" id="pillSimi" style="left:885px;top:380px">OSHA TRACKING · NO LABELS</span>
             </div>
           </div>
-          <div class="toposcroll">← scroll to see the full map →</div>
+          <div class="zoomhint">Shift&nbsp;+&nbsp;scroll to zoom · drag to pan</div>
         </div>
 
         <div class="panel" id="panelRead" hidden>
@@ -781,7 +819,7 @@
   const cDeb=$('cDeb'),cDown=$('cDown'),cBus=$('cBus'),cKet=$('cKet'),cDownN=$('cDownN');
   const pkDeb=$('pkDeb'),pkDown=$('pkDown'),pkKet=$('pkKet'),pkDownN=$('pkDownN');
   const destDeb=$('destDeb'),destKet=$('destKet'),destSimi=$('destSimi');
-  const pillDeb=$('pillDeb'),pillNotice=$('pillNotice'),pillKetPack=$('pillKetPack'),pillKetWin=$('pillKetWin'),pillSimi=$('pillSimi');
+  const pillDeb=$('pillDeb'),pillNotice=$('pillNotice'),pillKetPack=$('pillKetPack'),pillKetWin=$('pillKetWin'),pillKetCount=$('pillKetCount'),pillSimi=$('pillSimi');
   const setBranch=(el,grp,on)=>{el.setAttribute('class','conn '+grp+(on?' on flow':' dim'));};
   const setPill=(el,cls,txt)=>{el.className='tpill '+cls;el.textContent=txt;};
   const segArea=document.querySelector('.seg[data-group="area"]'),
@@ -864,7 +902,7 @@
     // friable branch (Kettleman)
     setBranch(cKet,'g-f',fOn);pkKet.classList.toggle('on',fOn);
     destKet.classList.toggle('on',fOn);destKet.classList.toggle('dim',!fOn);
-    pillKetPack.classList.toggle('dim',!fOn);pillKetWin.classList.toggle('dim',!fOn);
+    pillKetPack.classList.toggle('dim',!fOn);pillKetWin.classList.toggle('dim',!fOn);pillKetCount.classList.toggle('dim',!fOn);
 
     // non-friable branch (Simi)
     setBranch(cDownN,'g-n',nOn);pkDownN.classList.toggle('on',nOn);
@@ -899,8 +937,62 @@
     v.setAttribute('aria-selected','true');
     const map=v.dataset.view==='map';
     panelMap.hidden=!map;panelRead.hidden=map;
-    viewHint.textContent=map?'Watch the load travel its route':'Full checklist for this job';
+    viewHint.textContent=map?'Shift + scroll to zoom · drag to pan':'Full checklist for this job';
+    if(map) requestAnimationFrame(fitMap);
   }));
+
+  // ---- route map: pan + zoom (shift + scroll) ----
+  const STAGE_W=1180, STAGE_H=440;
+  const topoVP=document.getElementById('topoViewport'), topoStage=document.getElementById('topo');
+  let zScale=1, zTx=0, zTy=0, zMin=1, zMax=1.8;
+  const fitH=()=>STAGE_H*zMin;
+  function clampMap(){
+    const vw=topoVP.clientWidth||STAGE_W, vh=fitH();
+    const sw=STAGE_W*zScale, sh=STAGE_H*zScale;
+    zTx = sw<=vw ? (vw-sw)/2 : Math.min(0,Math.max(vw-sw,zTx));
+    zTy = sh<=vh ? (vh-sh)/2 : Math.min(0,Math.max(vh-sh,zTy));
+  }
+  function applyMap(){ topoStage.style.transform=`translate(${zTx}px,${zTy}px) scale(${zScale})`; topoVP.style.height=fitH()+'px'; }
+  function fitMap(){
+    const vw=topoVP.clientWidth||STAGE_W;
+    zMin=Math.min(1, vw/STAGE_W); zMax=Math.max(zMin*1.9, 1.5);
+    zScale=zMin; clampMap(); applyMap();
+  }
+  topoVP.addEventListener('wheel',e=>{
+    if(!e.shiftKey) return;
+    e.preventDefault();
+    const r=topoVP.getBoundingClientRect();
+    const d=Math.abs(e.deltaY)>=Math.abs(e.deltaX)?e.deltaY:e.deltaX;
+    const px=(e.clientX-r.left-zTx)/zScale, py=(e.clientY-r.top-zTy)/zScale;
+    zScale=Math.min(zMax,Math.max(zMin, zScale*(d<0?1.12:1/1.12)));
+    zTx=(e.clientX-r.left)-px*zScale; zTy=(e.clientY-r.top)-py*zScale;
+    clampMap(); applyMap();
+  },{passive:false});
+  let dragging=false;
+  topoVP.addEventListener('pointerdown',e=>{
+    if(e.target.closest('a')) return;
+    dragging=true; topoVP.classList.add('grabbing');
+    try{topoVP.setPointerCapture(e.pointerId);}catch(_){}
+  });
+  topoVP.addEventListener('pointermove',e=>{ if(!dragging) return; zTx+=e.movementX; zTy+=e.movementY; clampMap(); applyMap(); });
+  const endDrag=()=>{ dragging=false; topoVP.classList.remove('grabbing'); };
+  topoVP.addEventListener('pointerup',endDrag); topoVP.addEventListener('pointercancel',endDrag);
+  window.addEventListener('resize',()=>{ if(!panelMap.hidden) fitMap(); });
+  fitMap();
+
+  // ---- fullscreen expand for the whole interactive tool ----
+  const tool=document.querySelector('.tool'), expandBtn=document.getElementById('expandBtn');
+  expandBtn.addEventListener('click',()=>{
+    // A lingering identity transform on the .rise sections makes them a
+    // containing block, which would anchor position:fixed to the section
+    // instead of the viewport — strip it so the overlay covers the page.
+    document.querySelectorAll('.rise').forEach(el=>{el.style.animation='none';el.style.transform='none';el.style.opacity='1';});
+    const ex=tool.classList.toggle('is-expanded');
+    document.body.classList.toggle('noscroll',ex);
+    const label=ex?'Exit full screen':'Expand to full screen';
+    expandBtn.setAttribute('aria-label',label); expandBtn.title=label;
+    requestAnimationFrame(()=>{ if(!panelMap.hidden) fitMap(); });
+  });
 
   const tabs=document.querySelectorAll('.tabs button');
   const panels={scaqmd:document.getElementById('scaqmd'),avaqmd:document.getElementById('avaqmd'),vcapcd:document.getElementById('vcapcd')};

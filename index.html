@@ -12,10 +12,16 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="ASB Ref">
 <meta name="mobile-web-app-capable" content="yes">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* Self-hosted latin subsets (variable) — no third-party font host. */
+  @font-face{
+    font-family:'Inter';font-style:normal;font-weight:400 800;font-display:swap;
+    src:url('fonts/inter-latin.woff2') format('woff2');
+  }
+  @font-face{
+    font-family:'JetBrains Mono';font-style:normal;font-weight:400 700;font-display:swap;
+    src:url('fonts/jetbrainsmono-latin.woff2') format('woff2');
+  }
   :root{
     /* surfaces — stepped so layers read distinctly */
     --bg:#0b0f14;

@@ -14,15 +14,8 @@ const PRECACHE = [
   './icons/icon-512-maskable.png',
   './icons/apple-touch-icon.png',
   './icons/favicon-32.png',
-  './fonts/inter-latin-400.woff2',
-  './fonts/inter-latin-500.woff2',
-  './fonts/inter-latin-600.woff2',
-  './fonts/inter-latin-700.woff2',
-  './fonts/inter-latin-800.woff2',
-  './fonts/jetbrainsmono-latin-400.woff2',
-  './fonts/jetbrainsmono-latin-500.woff2',
-  './fonts/jetbrainsmono-latin-600.woff2',
-  './fonts/jetbrainsmono-latin-700.woff2'
+  './fonts/inter-latin.woff2',
+  './fonts/jetbrainsmono-latin.woff2'
 ];
 
 self.addEventListener('install', event => {

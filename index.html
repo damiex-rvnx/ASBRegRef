@@ -369,10 +369,12 @@
   .panel[hidden]{display:none}
 
   /* ---------- process / topology map (pan + zoom) ---------- */
-  .topo{position:relative;overflow:hidden;width:100%;cursor:grab;touch-action:pan-y;border-radius:12px;background:rgba(0,0,0,.12)}
+  .topo{position:relative;overflow:hidden;width:100%;height:480px;cursor:grab;touch-action:pan-y;border-radius:12px;background:rgba(0,0,0,.12)}
   .topo.grabbing{cursor:grabbing}
-  .topo-stage{position:relative;width:1300px;height:440px;transform-origin:0 0}
-  .topo-svg{position:absolute;inset:0;width:1300px;height:440px;overflow:visible;pointer-events:none}
+  .topo-stage{position:relative;width:1500px;height:560px;transform-origin:0 0}
+  .topo-svg{position:absolute;inset:0;width:1500px;height:560px;overflow:visible;pointer-events:none}
+  @media(max-width:760px){.topo{height:400px}}
+  .tool.is-expanded .topo{height:calc(100dvh - 340px);min-height:360px}
 
   .conn{fill:none;stroke:var(--line);stroke-width:3;stroke-linejoin:round;stroke-linecap:round;transition:stroke .35s ease,opacity .35s ease}
   .conn.spine{stroke:var(--accent)}
@@ -563,66 +565,66 @@
         <div class="panel" id="panelMap">
           <div class="topo" id="topoViewport">
             <div class="topo-stage" id="topo">
-              <svg class="topo-svg" viewBox="0 0 1300 440" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <svg class="topo-svg" viewBox="0 0 1500 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                 <defs>
                   <filter id="g" x="-60%" y="-60%" width="220%" height="220%">
                     <feGaussianBlur stdDeviation="3.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                   </filter>
                 </defs>
                 <!-- spine: new job -> sampling -> 1% gate -->
-                <path class="conn spine flow" d="M184,156 H264"/>
-                <path class="conn spine flow" id="pSpine2" d="M424,156 H504"/>
-                <path class="conn spine flow" d="M676,156 H784"/>
-                <!-- ≤1% branch (up to debris) — rounded corner -->
-                <path class="conn g-a on flow" id="cDeb" d="M784,156 L784,90 Q784,78 796,78 L1086,78"/>
+                <path class="conn spine flow" d="M194,230 H284"/>
+                <path class="conn spine flow" id="pSpine2" d="M454,230 H544"/>
+                <path class="conn spine flow" d="M724,230 H840"/>
+                <!-- ≤1% branch (up to debris) — rounded corners -->
+                <path class="conn g-a on flow" id="cDeb" d="M840,230 L840,132 Q840,120 852,120 L1260,120"/>
                 <!-- >1% shared trunk (down, rounded corner, then bus to friability split) -->
-                <path class="conn g-share dim" id="cShare" d="M784,156 L784,222 Q784,234 796,234 L950,234"/>
+                <path class="conn g-share dim" id="cShare" d="M840,230 L840,293 Q840,305 852,305 L1010,305"/>
                 <!-- friable branch (straight into Kettleman) -->
-                <path class="conn g-f dim" id="cKet" d="M950,234 H1086"/>
-                <!-- non-friable branch (down to simi) — rounded corner -->
-                <path class="conn g-n dim" id="cDownN" d="M950,234 L950,368 Q950,380 962,380 L1086,380"/>
+                <path class="conn g-f dim" id="cKet" d="M1010,305 H1260"/>
+                <!-- non-friable branch (down to simi) — rounded corner at top AND bottom -->
+                <path class="conn g-n dim" id="cDownN" d="M998,305 Q1010,305 1010,317 L1010,473 Q1010,485 1022,485 L1260,485"/>
                 <!-- travelling packets -->
-                <circle class="pkt-c c-accent on" r="4.8"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#pSpine2"/></animateMotion></circle>
-                <circle class="pkt-c c-ok on" id="pkDeb" r="4.8"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
-                <circle class="pkt-c c-accent" id="pkShare" r="4.8"><animateMotion dur="2.1s" repeatCount="indefinite"><mpath href="#cShare"/></animateMotion></circle>
-                <circle class="pkt-c c-alert" id="pkKet" r="4.8"><animateMotion dur="2s" repeatCount="indefinite"><mpath href="#cKet"/></animateMotion></circle>
-                <circle class="pkt-c c-warn" id="pkDownN" r="4.8"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#cDownN"/></animateMotion></circle>
+                <circle class="pkt-c c-accent on" r="4.8"><animateMotion dur="1.7s" repeatCount="indefinite"><mpath href="#pSpine2"/></animateMotion></circle>
+                <circle class="pkt-c c-ok on" id="pkDeb" r="4.8"><animateMotion dur="2.8s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
+                <circle class="pkt-c c-accent" id="pkShare" r="4.8"><animateMotion dur="2.2s" repeatCount="indefinite"><mpath href="#cShare"/></animateMotion></circle>
+                <circle class="pkt-c c-alert" id="pkKet" r="4.8"><animateMotion dur="2.1s" repeatCount="indefinite"><mpath href="#cKet"/></animateMotion></circle>
+                <circle class="pkt-c c-warn" id="pkDownN" r="4.8"><animateMotion dur="2.9s" repeatCount="indefinite"><mpath href="#cDownN"/></animateMotion></circle>
               </svg>
 
-              <div class="tnode spine start" style="left:24px;top:106px;width:160px;height:100px">
+              <div class="tnode spine start" style="left:24px;top:180px;width:170px;height:100px">
                 <span class="sic"><svg viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9 4.5h6v3H9z"/><path d="M8.5 11.5h7M8.5 15h4.5"/></svg></span>
                 <div class="st">New job</div><div class="ss">removal identified</div>
               </div>
-              <div class="tnode spine" style="left:264px;top:106px;width:160px;height:100px">
+              <div class="tnode spine" style="left:284px;top:180px;width:170px;height:100px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M9.5 3h5M11 3v6.2L6.3 17.4A2 2 0 0 0 8 20.4h8a2 2 0 0 0 1.7-3L13 9.2V3"/><path d="M8.4 15h7.2"/></svg></span>
                 <div class="st">Sampling</div><div class="ss">lab test for asbestos</div>
               </div>
-              <div class="tnode spine gate" id="stageGate" style="left:504px;top:106px;width:172px;height:100px">
+              <div class="tnode spine gate" id="stageGate" style="left:544px;top:180px;width:180px;height:100px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 3.2 20.8 12 12 20.8 3.2 12z"/></svg></span>
                 <div class="st">1% gate</div><div class="ss" id="gateSub">≤ 1% · not regulated</div>
               </div>
 
-              <div class="tnode dest deb on" id="destDeb" style="left:1086px;top:22px;width:214px;height:112px">
+              <div class="tnode dest deb on" id="destDeb" style="left:1260px;top:60px;width:220px;height:120px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5.4A1.4 1.4 0 0 1 10.9 4h2.2a1.4 1.4 0 0 1 1.4 1.4V7M6.5 7l.9 12.2a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L18.5 7"/><path d="M10.5 11v6M13.5 11v6"/></svg></span>
                 <div class="st">Debris landfill</div><div class="ss">≤ 1% · any accepting site</div>
               </div>
-              <div class="tnode dest ket dim" id="destKet" style="left:1086px;top:176px;width:214px;height:116px">
+              <div class="tnode dest ket dim" id="destKet" style="left:1260px;top:240px;width:220px;height:130px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
                 <div class="st">Kettleman Hills</div><div class="ss">35251 Old Skyline Rd</div>
                 <a class="dlink" href="https://www.google.com/maps/search/?api=1&amp;query=35251+Old+Skyline+Road+Kettleman+City+CA+93239" target="_blank" rel="noopener">Directions ↗</a>
               </div>
-              <div class="tnode dest simi dim" id="destSimi" style="left:1086px;top:322px;width:214px;height:116px">
+              <div class="tnode dest simi dim" id="destSimi" style="left:1260px;top:420px;width:220px;height:130px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
                 <div class="st">Simi Valley</div><div class="ss">2801 Madera Rd · call ahead</div>
                 <a class="dlink" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">Directions ↗</a>
               </div>
 
-              <span class="tpill on-ok" id="pillDeb" style="left:940px;top:78px">PLAIN DOUBLE-BAG</span>
-              <span class="tpill off dim" id="pillNotice" style="left:784px;top:196px">AQMD NOTICE</span>
-              <span class="tpill on-alert dim" id="pillKetPack" style="left:1018px;top:200px">LABELS + MANIFEST</span>
-              <span class="tpill on-alert dim" id="pillKetWin" style="left:1018px;top:234px">⚑ 10-DAY WINDOW</span>
-              <span class="tpill on-alert dim" id="pillKetCount" style="left:1018px;top:268px">COUNT + WEIGH BAGS</span>
-              <span class="tpill on-warn dim" id="pillSimi" style="left:1024px;top:380px">OSHA TRACKING · NO LABELS</span>
+              <span class="tpill on-ok" id="pillDeb" style="left:960px;top:120px">PLAIN DOUBLE-BAG</span>
+              <span class="tpill off dim" id="pillNotice" style="left:840px;top:262px">AQMD NOTICE</span>
+              <span class="tpill on-alert dim" id="pillKetPack" style="left:1088px;top:271px">LABELS + MANIFEST</span>
+              <span class="tpill on-alert dim" id="pillKetWin" style="left:1088px;top:305px">⚑ 10-DAY WINDOW</span>
+              <span class="tpill on-alert dim" id="pillKetCount" style="left:1088px;top:339px">COUNT + WEIGH BAGS</span>
+              <span class="tpill on-warn dim" id="pillSimi" style="left:1098px;top:485px">OSHA TRACKING · NO LABELS</span>
             </div>
           </div>
           <div class="zoomhint">Pinch or Shift&nbsp;+&nbsp;scroll to zoom · drag to pan</div>
@@ -941,17 +943,18 @@
   }));
 
   // ---- route map: pan + zoom (shift+scroll on desktop, pinch on touch) ----
-  const STAGE_W=1300, STAGE_H=440;
+  const STAGE_W=1500, STAGE_H=560;
   const topoVP=document.getElementById('topoViewport'), topoStage=document.getElementById('topo');
   let zScale=1, zTx=0, zTy=0, zMin=1, zMax=1.8;
-  const fitH=()=>STAGE_H*zMin;
   function clampMap(){
-    const vw=topoVP.clientWidth||STAGE_W, vh=fitH();
+    // the viewport height is set in CSS (taller than the fitted map), so the
+    // map floats with vertical breathing room and pans freely once zoomed.
+    const vw=topoVP.clientWidth||STAGE_W, vh=topoVP.clientHeight||STAGE_H;
     const sw=STAGE_W*zScale, sh=STAGE_H*zScale;
     zTx = sw<=vw ? (vw-sw)/2 : Math.min(0,Math.max(vw-sw,zTx));
     zTy = sh<=vh ? (vh-sh)/2 : Math.min(0,Math.max(vh-sh,zTy));
   }
-  function applyMap(){ topoStage.style.transform=`translate(${zTx}px,${zTy}px) scale(${zScale})`; topoVP.style.height=fitH()+'px'; }
+  function applyMap(){ topoStage.style.transform=`translate(${zTx}px,${zTy}px) scale(${zScale})`; }
   function fitMap(){
     const vw=topoVP.clientWidth||STAGE_W;
     // fit to width, but keep a floor so the map isn't microscopic on phones

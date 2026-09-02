@@ -346,118 +346,89 @@
   .ctrl.is-off .na{display:block}
   .ctrl.is-off .q{color:var(--text-3)}
 
-  /* ---------- live roadmap ---------- */
-  .roadmap{
-    background:var(--surface-1);border:1px solid var(--line);
-    border-radius:var(--r);padding:30px 24px 30px;overflow:hidden;
+  /* ---------- view toggle (map / readout share one panel) ---------- */
+  .viewbar{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    flex-wrap:wrap;padding:20px 26px 0;
   }
-  .rm-flow{display:flex;flex-direction:column;align-items:center}
-  .rm-node{
-    width:min(360px,100%);text-align:center;
-    background:var(--surface-2);border:1px solid var(--line);
-    border-radius:12px;padding:15px 18px;
+  .viewtabs{
+    display:inline-flex;gap:6px;background:var(--bg);
+    border:1px solid var(--line);padding:5px;border-radius:11px;
   }
-  .rm-node.gate{border-color:var(--line-bright);background:var(--surface-3)}
-  .rm-ic{
-    font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;
-    color:var(--accent);display:inline-block;margin-bottom:3px;letter-spacing:.04em;
+  .viewtabs button{
+    font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;
+    letter-spacing:.04em;padding:9px 15px;border-radius:8px;cursor:pointer;
+    border:1px solid transparent;background:transparent;color:var(--text-3);
+    transition:all .18s ease;
   }
-  .rm-node-t{font-size:14.5px;font-weight:700;color:var(--text)}
-  .rm-node-s{
-    font-size:11.5px;color:var(--text-3);margin-top:2px;
-    font-family:'JetBrains Mono',monospace;letter-spacing:.02em;
-    transition:color .3s ease;
-  }
-  .rm-stem{width:2px;height:30px;position:relative;background:var(--line);border-radius:2px;overflow:hidden}
-  .rm-stem .packet{
-    position:absolute;left:-3px;width:8px;height:8px;border-radius:50%;
-    background:var(--accent);box-shadow:0 0 12px var(--accent);
-    animation:flow 1.5s linear infinite;
-  }
-  @keyframes flow{from{top:-10px}to{top:32px}}
-  .rm-fork{width:2px;height:18px;background:var(--line);border-radius:2px}
+  .viewtabs button:hover{color:var(--text)}
+  .viewtabs button[aria-selected="true"]{background:var(--surface-3);color:var(--accent);border-color:var(--line-bright)}
+  .viewtabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .viewhint{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);letter-spacing:.03em}
+  .readout{border-top:0}
+  .panel[hidden]{display:none}
 
-  .rm-rail{position:relative;width:100%;height:20px}
-  .rm-rail .rail-line{position:absolute;top:0;left:16.66%;right:16.66%;height:2px;background:var(--line)}
+  /* ---------- curved route map (SVG) ---------- */
+  .rmap{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .flowsvg{display:block;width:100%;min-width:700px;height:auto}
+  .flowsvg text{dominant-baseline:middle;pointer-events:none;font-family:'Inter',system-ui,sans-serif}
 
-  .rm-lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-  @media(max-width:760px){
-    .rm-lanes{grid-template-columns:1fr;gap:22px}
-    .rm-rail{display:none}
-    .rm-fork{height:22px}
-  }
+  .conn{fill:none;stroke:var(--line);stroke-width:2.5;stroke-linecap:round;transition:stroke .35s ease}
+  .branch.active .conn{stroke-width:3.5;stroke-dasharray:10 12;animation:dashmove 1s linear infinite}
+  .branch.F.active .conn{stroke:var(--alert)}
+  .branch.N.active .conn{stroke:var(--warn)}
+  .branch.A.active .conn{stroke:var(--ok)}
+  .conn.lead{stroke:var(--accent);stroke-width:3;stroke-dasharray:9 11;animation:dashmove 1s linear infinite}
+  @keyframes dashmove{to{stroke-dashoffset:-22}}
 
-  .lane{--lanec:var(--text-3);position:relative;transition:opacity .35s ease,filter .35s ease}
-  .lane.A{--lanec:var(--ok)}
-  .lane.F{--lanec:var(--alert)}
-  .lane.N{--lanec:var(--warn)}
-  .lane.dim{opacity:.32;filter:grayscale(.85)}
-  .lane-drop{width:2px;height:20px;margin:0 auto;background:var(--line);border-radius:2px;position:relative;overflow:hidden}
-  .lane.active .lane-drop{background:var(--lanec)}
-  .lane.active .lane-drop::after{
-    content:"";position:absolute;left:-3px;width:8px;height:8px;border-radius:50%;
-    background:var(--lanec);box-shadow:0 0 12px var(--lanec);
-    animation:flow2 1.4s linear infinite;
-  }
-  @keyframes flow2{from{top:-10px}to{top:22px}}
+  .pk{opacity:0;transition:opacity .3s ease}
+  .branch.active .pk{opacity:1;filter:url(#glow)}
+  .branch.F .pk{fill:var(--alert)}
+  .branch.N .pk{fill:var(--warn)}
+  .branch.A .pk{fill:var(--ok)}
+  .pk.lead{opacity:1;fill:var(--accent);filter:url(#glow)}
 
-  .lane-card{
-    background:var(--surface-2);border:1px solid var(--line);
-    border-radius:12px;padding:18px 18px 16px;position:relative;
-    transition:border-color .35s ease,box-shadow .35s ease,transform .35s ease;
+  .node rect{fill:var(--surface-2);stroke:var(--line);stroke-width:1.5;transition:stroke .35s ease}
+  .node .nt{fill:var(--text);font-size:14px;font-weight:700}
+  .node .ns{fill:var(--text-3);font-size:10.5px;font-weight:500;font-family:'JetBrains Mono',monospace}
+  .node .nic{font-size:18px}
+  .node{transition:opacity .35s ease}
+  .node.dim{opacity:.32;filter:grayscale(.85)}
+  a.node{cursor:pointer}
+  a.node:hover rect{stroke:var(--line-bright)}
+  .node.active.F rect{stroke:var(--alert)}
+  .node.active.N rect{stroke:var(--warn)}
+  .node.active.A rect{stroke:var(--ok)}
+  .node.active.F{filter:drop-shadow(0 0 9px var(--alert))}
+  .node.active.N{filter:drop-shadow(0 0 9px var(--warn))}
+  .node.active.A{filter:drop-shadow(0 0 9px var(--ok))}
+  .node.active{transform-box:fill-box;transform-origin:center;animation:nodepulse 2.2s ease-in-out infinite}
+  @keyframes nodepulse{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+
+  .node.gate .gd{fill:var(--surface-3);stroke:var(--ok);stroke-width:2;transition:stroke .35s ease}
+  .node.gate.reg .gd{stroke:var(--alert)}
+  .node.gate .gt{fill:var(--accent);font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;text-anchor:middle}
+  .node.gate{transform-box:fill-box;transform-origin:center;animation:gatepulse 2.6s ease-in-out infinite}
+  @keyframes gatepulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+  .mapcap{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:20px}
+  .mapcap .lead{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-3);letter-spacing:.06em}
+  .mapcap .mc{
+    font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;
+    letter-spacing:.06em;padding:7px 11px;border-radius:7px;color:#04141a;
+    border:1px solid transparent;
   }
-  .lane.active .lane-card{
-    border-color:var(--lanec);
-    box-shadow:0 0 0 1px var(--lanec),0 16px 38px -20px var(--lanec);
-    transform:translateY(-3px);
-  }
-  .lane-cap{
-    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
-    letter-spacing:.09em;color:var(--lanec);margin-bottom:14px;
-    display:flex;align-items:center;gap:8px;
-  }
-  .lane-cap::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--lanec);flex-shrink:0}
-  .lane.active .lane-cap::before{box-shadow:0 0 10px var(--lanec)}
-  .lane-steps{list-style:none;display:grid;gap:11px;margin:0}
-  .lane-steps li{font-size:12.5px;color:var(--text-2);padding-left:20px;position:relative;line-height:1.5}
-  .lane-steps li::before{content:"";position:absolute;left:2px;top:6px;width:6px;height:6px;border-radius:50%;background:var(--lanec);opacity:.55}
-  .lane.active .lane-steps li::before{opacity:1}
-  .lane-steps li strong{color:var(--text);font-weight:700}
-  .lane-badge{
-    margin-top:11px;padding:10px 12px;border-radius:9px;
-    border:1px solid var(--line);background:var(--surface-3);
-    font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
-    letter-spacing:.03em;line-height:1.6;color:var(--text-3);
-    display:flex;flex-direction:column;gap:3px;
-  }
-  .lane-badge .bi{font-weight:700;letter-spacing:.07em}
-  .b-notice{background:var(--warn-dim);border-color:var(--warn-line);color:var(--warn)}
-  .b-window{background:var(--alert-dim);border-color:var(--alert-line);color:var(--alert)}
-  .b-loc{background:var(--accent-dim);border-color:var(--line-bright);color:var(--accent)}
-  .b-muted{background:var(--surface-3);border-color:var(--line);color:var(--text-3)}
-  .lane-dest{
-    margin-top:14px;display:flex;align-items:center;gap:11px;
-    padding:12px 14px;border-radius:10px;background:var(--bg);border:1px solid var(--line);
-  }
-  .lane.active .lane-dest{border-color:var(--lanec)}
-  .lane-dest .pin{font-size:17px;line-height:1;flex-shrink:0}
-  .lane-dest .dwrap{display:flex;flex-direction:column;min-width:0}
-  .lane-dest .dn{font-size:13.5px;font-weight:700;color:var(--text)}
-  .lane-dest .dl{font-size:10.5px;color:var(--text-3);font-family:'JetBrains Mono',monospace;letter-spacing:.04em;margin-top:1px}
-  .rm-legend{
-    display:flex;flex-wrap:wrap;gap:16px;margin-top:24px;padding-top:18px;
-    border-top:1px solid var(--line);
-  }
-  .rm-legend span{
-    font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--text-3);
-    letter-spacing:.04em;display:flex;align-items:center;gap:7px;
-  }
-  .rm-legend i{width:10px;height:10px;border-radius:50%;display:inline-block;flex-shrink:0}
+  .mc-ok{background:var(--ok)} .mc-warn{background:var(--warn)} .mc-alert{background:var(--alert)} .mc-accent{background:var(--accent)}
+  .mc-muted{background:var(--surface-3);color:var(--text-3);border-color:var(--line)}
+
+  .lnk{color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap}
+  .lnk:hover{text-decoration:underline}
 
   @media(prefers-reduced-motion:reduce){
     .rise,.district{animation:none;opacity:1;transform:none}
     .eyebrow::before{animation:none}
-    .rm-stem .packet,.lane.active .lane-drop::after{animation:none}
+    .conn,.conn.lead{animation:none}
+    .node.active,.node.gate{animation:none}
     *{transition:none!important}
   }
 </style>
@@ -493,7 +464,7 @@
   <section class="rise" style="animation-delay:.07s">
     <div class="sec-label">Interactive</div>
     <h2>Set the job, read the path</h2>
-    <p class="sec-sub">Tap each variable. The readout updates live.</p>
+    <p class="sec-sub">Tap each variable — the route map and readout both update live. Switch between them below.</p>
 
     <div class="tool">
       <div class="tool-pad">
@@ -527,93 +498,91 @@
         </div>
       </div>
 
+      <div class="viewbar">
+        <div class="viewtabs" role="tablist" aria-label="Result view">
+          <button role="tab" aria-selected="true" data-view="map">◺ Route map</button>
+          <button role="tab" aria-selected="false" data-view="read">☰ Readout</button>
+        </div>
+        <div class="viewhint" id="viewHint">Watch the load travel its route</div>
+      </div>
+
       <div class="readout">
-        <div class="verdict ok" id="verdict" aria-live="polite">
-          <div class="v-top">
-            <span class="chip ok" id="chip">Not regulated</span>
-            <h3 id="vTitle">Non-regulated debris</h3>
+        <div class="panel" id="panelMap">
+          <div class="rmap">
+            <svg class="flowsvg" viewBox="0 0 960 320" role="img" aria-label="Live disposal route map">
+              <defs>
+                <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+                  <feGaussianBlur stdDeviation="4" result="b"/>
+                  <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+
+              <!-- branch connectors + travelling packets -->
+              <g class="branch F" id="brF">
+                <path class="conn" id="pathF" d="M272,160 C 470,160 545,70 716,70"/>
+                <circle class="pk" r="5.5"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#pathF"/></animateMotion></circle>
+              </g>
+              <g class="branch N" id="brN">
+                <path class="conn" id="pathN" d="M272,160 C 470,160 560,160 716,160"/>
+                <circle class="pk" r="5.5"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#pathN"/></animateMotion></circle>
+              </g>
+              <g class="branch A active" id="brA">
+                <path class="conn" id="pathA" d="M272,160 C 470,160 545,250 716,250"/>
+                <circle class="pk" r="5.5"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#pathA"/></animateMotion></circle>
+              </g>
+
+              <!-- origin -> gate lead (always live) -->
+              <path class="conn lead" id="pathLead" d="M150,160 L 192,160"/>
+              <circle class="pk lead" r="4.5"><animateMotion dur="1.3s" repeatCount="indefinite"><mpath href="#pathLead"/></animateMotion></circle>
+
+              <!-- origin -->
+              <g class="node origin">
+                <rect x="24" y="134" width="126" height="52" rx="12"/>
+                <text class="nic" x="46" y="160">▣</text>
+                <text class="nt" x="66" y="152">Off site</text>
+                <text class="ns" x="66" y="170">load pulled</text>
+              </g>
+
+              <!-- 1% gate -->
+              <g class="node gate" id="gateNode">
+                <path class="gd" d="M232,118 L274,160 L232,202 L190,160 Z"/>
+                <text class="gt" x="232" y="161">1%</text>
+              </g>
+
+              <!-- destinations -->
+              <a class="node F dim" id="nodeF" href="https://www.google.com/maps/search/?api=1&amp;query=35251+Old+Skyline+Road+Kettleman+City+CA+93239" target="_blank" rel="noopener">
+                <rect x="716" y="40" width="212" height="60" rx="12"/>
+                <text class="nic" x="740" y="70">📍</text>
+                <text class="nt" x="762" y="62">Kettleman Hills</text>
+                <text class="ns" x="762" y="80">friable · tap for directions</text>
+              </a>
+              <a class="node N dim" id="nodeN" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">
+                <rect x="716" y="130" width="212" height="60" rx="12"/>
+                <text class="nic" x="740" y="160">📍</text>
+                <text class="nt" x="762" y="152">Simi Valley</text>
+                <text class="ns" x="762" y="170">non-friable · tap for directions</text>
+              </a>
+              <g class="node A active" id="nodeA">
+                <rect x="716" y="220" width="212" height="60" rx="12"/>
+                <text class="nic" x="740" y="250">🗑️</text>
+                <text class="nt" x="762" y="242">Debris landfill</text>
+                <text class="ns" x="762" y="260">≤ 1% · any accepting site</text>
+              </g>
+            </svg>
           </div>
-          <p class="v-lede" id="vLede"></p>
-          <div class="rows" id="vRows"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="rise" style="animation-delay:.16s" id="routeSection">
-    <div class="sec-label">Live route</div>
-    <h2>Where this load travels</h2>
-    <p class="sec-sub">The map redraws as you set the three variables above. The lit lane is this job's route; notices, deadlines, and the dump site light up where they apply.</p>
-
-    <div class="roadmap" id="roadmap">
-      <div class="rm-flow">
-        <div class="rm-node origin">
-          <span class="rm-ic">▣</span>
-          <div class="rm-node-t">Removed from site</div>
-          <div class="rm-node-s">load leaves the job</div>
-        </div>
-        <div class="rm-stem"><span class="packet"></span></div>
-        <div class="rm-node gate">
-          <span class="rm-ic">1%</span>
-          <div class="rm-node-t">Lab-result gate</div>
-          <div class="rm-node-s" id="rmGateVal">≤ 1% — not regulated</div>
-        </div>
-        <div class="rm-fork"></div>
-      </div>
-
-      <div class="rm-rail"><span class="rail-line"></span></div>
-
-      <div class="rm-lanes">
-        <div class="lane A" id="laneA">
-          <div class="lane-drop"></div>
-          <div class="lane-card">
-            <div class="lane-cap">NON-REGULATED · ≤ 1%</div>
-            <ul class="lane-steps">
-              <li><strong>Plain double-bag.</strong> No asbestos labels, stickers, or manifest.</li>
-              <li>Regular construction-debris landfill that accepts the material.</li>
-              <li>Keep the non-ACM lab letter with the load; check lead (TCLP) separately.</li>
-            </ul>
-            <div class="lane-badge b-muted"><span class="bi">ADVANCE NOTICE</span><span>None from content — structure demolition may still need district notice.</span></div>
-            <div class="lane-badge b-loc"><span class="bi">DUMP LOCATION</span><span>LA-area job → LA-area landfill · Ventura job → local site. Don't haul an LA load back to Ventura.</span></div>
-            <div class="lane-dest"><span class="pin">🗑️</span><div class="dwrap"><span class="dn">Regular debris landfill</span><span class="dl">matches the job's jurisdiction</span></div></div>
-          </div>
+          <div class="mapcap" id="mapCap"></div>
         </div>
 
-        <div class="lane F" id="laneF">
-          <div class="lane-drop"></div>
-          <div class="lane-card">
-            <div class="lane-cap">FRIABLE · &gt; 1%</div>
-            <div class="lane-badge b-muted" id="noticeF"><span class="bi">ADVANCE NOTICE</span><span>Under 100 ft² — exempt from advance notification.</span></div>
-            <ul class="lane-steps">
-              <li><strong>Labeled 6-mil bags</strong>, double-bagged, goosenecked, weight-labeled.</li>
-              <li>Manifest / waste shipment record rides with the load.</li>
-              <li>Full Cal/OSHA controls — containment, negative air, wet methods, decon.</li>
-            </ul>
-            <div class="lane-badge b-window"><span class="bi">⚑ 10-DAY WINDOW</span><span>Must reach Kettleman within 10 days of removal — the day you pull it off site is day 1.</span></div>
-            <div class="lane-dest"><span class="pin">📍</span><div class="dwrap"><span class="dn">Kettleman Hills</span><span class="dl">friable-permitted facility</span></div></div>
-          </div>
-        </div>
-
-        <div class="lane N" id="laneN">
-          <div class="lane-drop"></div>
-          <div class="lane-card">
-            <div class="lane-cap">NON-FRIABLE · &gt; 1%</div>
-            <div class="lane-badge b-muted" id="noticeN"><span class="bi">ADVANCE NOTICE</span><span>Under 100 ft² — exempt from advance notification.</span></div>
-            <ul class="lane-steps">
-              <li><strong>OSHA waste tracking</strong> — no asbestos hazard labels required.</li>
-              <li>Bag and keep intact — don't grind, saw, or break.</li>
-              <li>If your method makes it friable, it jumps to the Kettleman path.</li>
-            </ul>
-            <div class="lane-badge b-muted"><span class="bi">NO WINDOW</span><span>No 10-day disposal deadline — that clock is friable-only.</span></div>
-            <div class="lane-dest"><span class="pin">📍</span><div class="dwrap"><span class="dn">Simi Valley Landfill</span><span class="dl">accepts non-friable ACM</span></div></div>
+        <div class="panel" id="panelRead" hidden>
+          <div class="verdict ok" id="verdict" aria-live="polite">
+            <div class="v-top">
+              <span class="chip ok" id="chip">Not regulated</span>
+              <h3 id="vTitle">Non-regulated debris</h3>
+            </div>
+            <p class="v-lede" id="vLede"></p>
+            <div class="rows" id="vRows"></div>
           </div>
         </div>
-      </div>
-
-      <div class="rm-legend">
-        <span><i style="background:var(--ok)"></i>≤ 1% · not regulated</span>
-        <span><i style="background:var(--alert)"></i>Friable · Kettleman · 10-day clock</span>
-        <span><i style="background:var(--warn)"></i>Non-friable · Simi Valley</span>
       </div>
     </div>
   </section>
@@ -711,8 +680,8 @@
         <div class="trig">TRIGGER — 1% OR BELOW</div>
         <ol>
           <li>Double-bag plain poly — <strong>no</strong> asbestos labels or stickers</li>
-          <li>Regular construction-debris landfill that accepts the material</li>
-          <li><strong>LA-area job → LA-area landfill</strong>; Ventura job → local site</li>
+          <li>Any construction-debris landfill that accepts the material</li>
+          <li>LA loads are often consolidated on a truck and hauled to Ventura for one full dump</li>
           <li>Keep the non-ACM letter with the load</li>
           <li>Check separately for lead — a TCLP may apply</li>
         </ol>
@@ -724,6 +693,7 @@
           <li>Labeled 6-mil asbestos bags, double-bagged, gooseneck sealed</li>
           <li>Generator + weight labeling, manifest / waste shipment record</li>
           <li><strong>Kettleman Hills</strong> — friable-permitted facility</li>
+          <li>35251 Old Skyline Rd, Kettleman City 93239 · <a class="lnk" href="https://www.google.com/maps/search/?api=1&amp;query=35251+Old+Skyline+Road+Kettleman+City+CA+93239" target="_blank" rel="noopener">Directions ↗</a></li>
           <li><strong>10-day window</strong> — dispose within 10 days of removal (day 1 = removal day)</li>
           <li>Advance notice to air district if ≥ 100 ft²</li>
         </ol>
@@ -735,6 +705,7 @@
           <li><strong>OSHA waste tracking</strong> — no asbestos hazard labels</li>
           <li>Bag and keep intact — no grinding, sawing, breaking</li>
           <li><strong>Simi Valley Landfill</strong> — accepts non-friable ACM</li>
+          <li>2801 Madera Rd, Simi Valley 93065 · call ahead / pre-approval · <a class="lnk" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">Directions ↗</a></li>
           <li>No 10-day disposal window</li>
           <li>Advance notice to air district if ≥ 100 ft²</li>
         </ol>
@@ -742,7 +713,7 @@
     </div>
     <div class="flag">
       <span class="ic">FIELD NOTE</span>
-      <p><strong>Common mix-ups:</strong> asbestos labels, gooseneck, and manifest are for <strong>friable</strong> material — non-friable rides on <strong>OSHA waste tracking with no hazard labels</strong>. Under 1% is plain debris, but still dump an <strong>LA job's load at an LA-area landfill</strong>, not back in Ventura. And friable has a clock — <strong>10 days from removal to Kettleman.</strong></p>
+      <p><strong>Common mix-ups:</strong> asbestos labels, gooseneck, and manifest are for <strong>friable</strong> material — non-friable rides on <strong>OSHA waste tracking with no hazard labels</strong>. Under 1% is plain debris — dump at any landfill that accepts it (LA loads are often trucked to Ventura and dumped once the truck's full). And friable has a clock — <strong>10 days from removal to Kettleman.</strong></p>
     </div>
   </section>
 
@@ -761,9 +732,12 @@
         vTitle=document.getElementById('vTitle'),vLede=document.getElementById('vLede'),
         vRows=document.getElementById('vRows');
 
-  const rmGate=document.getElementById('rmGateVal');
-  const lanes={A:document.getElementById('laneA'),F:document.getElementById('laneF'),N:document.getElementById('laneN')};
-  const noticeF=document.getElementById('noticeF'),noticeN=document.getElementById('noticeN');
+  const MAP_KETTLEMAN='https://www.google.com/maps/search/?api=1&query=35251+Old+Skyline+Road+Kettleman+City+CA+93239';
+  const MAP_SIMI='https://www.google.com/maps/search/?api=1&query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065';
+
+  const brs={A:document.getElementById('brA'),F:document.getElementById('brF'),N:document.getElementById('brN')};
+  const nds={A:document.getElementById('nodeA'),F:document.getElementById('nodeF'),N:document.getElementById('nodeN')};
+  const gateNode=document.getElementById('gateNode'),mapCap=document.getElementById('mapCap');
   const segArea=document.querySelector('.seg[data-group="area"]'),
         segFri=document.querySelector('.seg[data-group="friable"]');
   const ctrlArea=segArea.closest('.ctrl'),ctrlFri=segFri.closest('.ctrl');
@@ -782,7 +756,7 @@
         ['Work practices','Not mandated by content — your IH or CAC can still direct Cal/OSHA controls (containment, wet methods, HEPA). Follow the directive.'],
         ['Packaging','Plain double-bag poly. <strong>No</strong> asbestos labels, stickers, or manifest.'],
         ['Disposal','Any regular construction-debris landfill <strong>that accepts the material</strong>. Keep the non-ACM lab letter with the load.'],
-        ['Dump location','Match the landfill to the job\'s jurisdiction — an <strong>LA-area job goes to an LA-area landfill</strong>, a Ventura job to a local site. Don\'t haul an LA load back to Ventura.'],
+        ['Dump location','Use any landfill that accepts the material. LA-job loads are commonly consolidated on a truck and hauled to Ventura for one full dump once it\'s full.'],
         ['Also check','Lead — evaluate separately; a TCLP may be needed on lead-paint debris.']
       ];
     }else{
@@ -803,8 +777,8 @@
           ?'Labeled 6-mil bags, double-bagged, goosenecked, weight-labeled, manifest / waste shipment record.'
           :'<strong>OSHA waste tracking only — no asbestos hazard labels.</strong> Bag and keep intact.'],
         ['Destination',fri
-          ?'<strong>Kettleman Hills</strong> — permitted friable-asbestos facility.'
-          :'<strong>Simi Valley Landfill</strong> — accepts non-friable ACM.'],
+          ?`<strong>Kettleman Hills</strong> — 35251 Old Skyline Rd, Kettleman City 93239. <a class="lnk" href="${MAP_KETTLEMAN}" target="_blank" rel="noopener">Directions ↗</a>`
+          :`<strong>Simi Valley Landfill</strong> — 2801 Madera Rd, Simi Valley 93065. Call ahead / pre-approval. <a class="lnk" href="${MAP_SIMI}" target="_blank" rel="noopener">Directions ↗</a>`],
         ['Disposal window',fri
           ?'<strong>10 days</strong> — must reach Kettleman within 10 days of removal (the day you pull it off site is day 1).'
           :'No 10-day window — that deadline is friable-only. Keep intact; a method that makes it friable moves it to the Kettleman path.']
@@ -821,23 +795,23 @@
     const notify=state.area==='large';
     const active=!reg?'A':(state.friable==='friable'?'F':'N');
 
-    rmGate.textContent=reg?'> 1% — regulated ACM':'≤ 1% — not regulated';
-    rmGate.style.color=reg?'var(--alert)':'var(--ok)';
-
+    gateNode.classList.toggle('reg',reg);
     ['A','F','N'].forEach(k=>{
-      lanes[k].classList.toggle('active',k===active);
-      lanes[k].classList.toggle('dim',k!==active);
+      brs[k].classList.toggle('active',k===active);
+      nds[k].classList.toggle('active',k===active);
+      nds[k].classList.toggle('dim',k!==active);
     });
 
-    [noticeF,noticeN].forEach(b=>{
-      if(notify){
-        b.className='lane-badge b-notice';
-        b.innerHTML='<span class="bi">⚑ ADVANCE NOTICE</span><span>10 working days before start — file with the air district.</span>';
-      }else{
-        b.className='lane-badge b-muted';
-        b.innerHTML='<span class="bi">ADVANCE NOTICE</span><span>Under 100 ft² — exempt from advance notification.</span>';
-      }
-    });
+    const notice=notify?['mc-warn','⚑ NOTICE · 10 DAYS BEFORE']:['mc-muted','NOTICE EXEMPT · <100 FT²'];
+    let chips;
+    if(!reg){
+      chips=[['mc-ok','≤ 1% · NOT REGULATED'],['mc-accent','ANY ACCEPTING LANDFILL'],['mc-muted','NO LABELS · NO MANIFEST']];
+    }else if(active==='F'){
+      chips=[['mc-alert','FRIABLE → KETTLEMAN'],['mc-alert','⚑ 10-DAY WINDOW'],notice];
+    }else{
+      chips=[['mc-warn','NON-FRIABLE → SIMI VALLEY'],['mc-muted','OSHA TRACKING · NO LABELS'],notice];
+    }
+    mapCap.innerHTML='<span class="lead">ROUTE&nbsp;→</span>'+chips.map(c=>`<span class="mc ${c[0]}">${c[1]}</span>`).join('');
 
     // Below the 1% line, area + friability are moot — grey them out.
     const off=!reg;
@@ -858,6 +832,17 @@
     });
   });
   render();
+
+  const viewBtns=document.querySelectorAll('.viewtabs button');
+  const panelMap=document.getElementById('panelMap'),panelRead=document.getElementById('panelRead');
+  const viewHint=document.getElementById('viewHint');
+  viewBtns.forEach(v=>v.addEventListener('click',()=>{
+    viewBtns.forEach(x=>x.setAttribute('aria-selected','false'));
+    v.setAttribute('aria-selected','true');
+    const map=v.dataset.view==='map';
+    panelMap.hidden=!map;panelRead.hidden=map;
+    viewHint.textContent=map?'Watch the load travel its route':'Full checklist for this job';
+  }));
 
   const tabs=document.querySelectorAll('.tabs button');
   const panels={scaqmd:document.getElementById('scaqmd'),avaqmd:document.getElementById('avaqmd'),vcapcd:document.getElementById('vcapcd')};

@@ -395,10 +395,14 @@
   .panel[hidden]{display:none}
 
   /* ---------- process / topology map (pan + zoom) ---------- */
-  .topo{position:relative;overflow:hidden;width:100%;height:480px;cursor:grab;touch-action:pan-y;border-radius:12px;background:rgba(0,0,0,.12)}
+  .topo{position:relative;overflow:hidden;width:100%;height:480px;cursor:grab;touch-action:pan-y;border-radius:12px;background:rgba(0,0,0,.12);user-select:none;-webkit-user-select:none}
+  .topo *{user-select:none;-webkit-user-select:none}
+  .topo.zoomed{touch-action:none} /* once zoomed, own the gesture so the page doesn't move */
   .topo.grabbing{cursor:grabbing}
   .topo-stage{position:relative;width:1500px;height:560px;transform-origin:0 0}
-  .topo-svg{position:absolute;inset:0;width:1500px;height:560px;overflow:visible;pointer-events:none}
+  .topo-stage.spring{transition:transform .18s cubic-bezier(.22,.61,.36,1)} /* eased spring-back after an overscroll drag */
+  .topo-svg{position:absolute;inset:0;width:1500px;height:560px;overflow:visible;pointer-events:none;-webkit-user-drag:none}
+  .topo .sic,.topo .sic *{-webkit-user-drag:none}
   @media(max-width:760px){.topo{height:400px}}
   .tool.is-expanded .topo{height:calc(100dvh - 340px);min-height:360px}
 
@@ -1163,25 +1167,65 @@
     if(map) requestAnimationFrame(fitMap);
   }));
 
-  // ---- route map: pan + zoom (shift+scroll on desktop, pinch on touch) ----
+  // ---- route map: pan + zoom (shift+scroll or drag on desktop, pinch + drag on touch) ----
   const STAGE_W=1500, STAGE_H=560;
   const topoVP=document.getElementById('topoViewport'), topoStage=document.getElementById('topo');
   let zScale=1, zTx=0, zTy=0, zMin=1, zMax=1.8;
-  function clampMap(){
-    // the viewport height is set in CSS (taller than the fitted map), so the
-    // map floats with vertical breathing room and pans freely once zoomed.
+  const EPS=1e-4;
+  const reduceMotion=matchMedia('(prefers-reduced-motion:reduce)');
+
+  // Resting pan range (no overscroll). Content springs back into this.
+  function ranges(){
     const vw=topoVP.clientWidth||STAGE_W, vh=topoVP.clientHeight||STAGE_H;
     const sw=STAGE_W*zScale, sh=STAGE_H*zScale;
-    zTx = sw<=vw ? (vw-sw)/2 : Math.min(0,Math.max(vw-sw,zTx));
-    zTy = sh<=vh ? (vh-sh)/2 : Math.min(0,Math.max(vh-sh,zTy));
+    const Mx=Math.min(72, vw*0.1), My=Math.min(56, vh*0.1);   // overscroll margins
+    const loX = sw<=vw ? (vw-sw)/2 : vw-sw, hiX = sw<=vw ? (vw-sw)/2 : 0;
+    const loY = sh<=vh ? (vh-sh)/2 : vh-sh, hiY = sh<=vh ? (vh-sh)/2 : 0;
+    return {vw,vh,sw,sh,Mx,My,loX,hiX,loY,hiY};
   }
-  function applyMap(){ topoStage.style.transform=`translate(${zTx}px,${zTy}px) scale(${zScale})`; }
+  // hard clamp zTx/zTy into the resting range (used by pinch, wheel-zoom, fit)
+  function clampMap(){
+    const r=ranges();
+    zTx=Math.min(r.hiX,Math.max(r.loX,zTx));
+    zTy=Math.min(r.hiY,Math.max(r.loY,zTy));
+  }
+  function applyMap(){
+    topoStage.style.transform=`translate(${zTx}px,${zTy}px) scale(${zScale})`;
+    topoVP.classList.toggle('zoomed', zScale>zMin+EPS); // toggles touch-action
+  }
+  // damped rubber-band: beyond the edge, movement is 0.35× and capped at the margin
+  const damp=(pos,lo,hi,M)=> pos<lo ? lo-Math.min(M,(lo-pos)*0.35)
+                          : pos>hi ? hi+Math.min(M,(pos-hi)*0.35) : pos;
+  // during a drag, display the overscrolled (damped) position without clamping zTx/zTy
+  function applyDrag(){
+    const r=ranges();
+    const tx=damp(zTx,r.loX,r.hiX,r.Mx), ty=damp(zTy,r.loY,r.hiY,r.My);
+    topoStage.style.transform=`translate(${tx}px,${ty}px) scale(${zScale})`;
+  }
+  // ease zTx/zTy back into the resting range after an overscroll drag / pinch
+  function springBack(){
+    clampMap();
+    if(reduceMotion.matches){ applyMap(); return; }
+    topoStage.classList.add('spring');
+    applyMap();
+    let t=setTimeout(fin,260);
+    function fin(){ clearTimeout(t); topoStage.classList.remove('spring'); topoStage.removeEventListener('transitionend',fin); }
+    topoStage.addEventListener('transitionend',fin);
+  }
   function fitMap(){
     const vw=topoVP.clientWidth||STAGE_W;
     // fit to width, but keep a floor so the map isn't microscopic on phones
     // (below the floor it overflows and can be panned / pinch-zoomed).
     zMin=Math.min(1, Math.max(0.4, vw/STAGE_W)); zMax=Math.max(zMin*2, 1.7);
     zScale=zMin; clampMap(); applyMap();
+  }
+  // re-fit on resize/expand but preserve the current zoom when the user has zoomed in
+  function relayout(){
+    const vw=topoVP.clientWidth||STAGE_W;
+    const wasFit = zScale<=zMin+EPS;
+    zMin=Math.min(1, Math.max(0.4, vw/STAGE_W)); zMax=Math.max(zMin*2, 1.7);
+    zScale = wasFit ? zMin : Math.min(zMax, Math.max(zMin, zScale));
+    clampMap(); applyMap();
   }
   // zoom around a viewport-space point (vx,vy)
   function zoomAt(vx,vy,factor){
@@ -1198,14 +1242,24 @@
     zoomAt(e.clientX-r.left, e.clientY-r.top, d<0?1.12:1/1.12);
   },{passive:false});
 
-  // unified pointer handling: mouse drag to pan, two-finger pinch to zoom
+  // Block the page's own pinch-zoom / two-finger scroll while gesturing on the map.
+  topoVP.addEventListener('touchmove',e=>{ if(e.touches.length>=2) e.preventDefault(); },{passive:false});
+  // Safari desktop/iOS pinch (feature-detected — GestureEvent isn't on other engines).
+  if('ongesturestart' in window){
+    ['gesturestart','gesturechange','gestureend'].forEach(t=>topoVP.addEventListener(t,e=>e.preventDefault()));
+  }
+
+  // unified pointer handling: drag to pan (mouse always, touch once zoomed), two-finger pinch to zoom
   const pointers=new Map();
   let dragging=false, pinch=null;
   const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   topoVP.addEventListener('pointerdown',e=>{
-    if(e.target.closest('a')) return;
+    if(e.target.closest('a')) return;   // keep destination links clickable / keyboard-reachable
+    e.preventDefault();                 // stop text/image selection on drag
+    topoStage.classList.remove('spring');
     pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
-    if(pointers.size===1 && e.pointerType==='mouse'){
+    // mouse pans at any zoom; touch pans only once zoomed (at fit, touch-action:pan-y scrolls the page)
+    if(pointers.size===1 && (e.pointerType==='mouse' || zScale>zMin+EPS)){
       dragging=true; topoVP.classList.add('grabbing');
       try{topoVP.setPointerCapture(e.pointerId);}catch(_){}
     }
@@ -1217,8 +1271,10 @@
     }
   });
   topoVP.addEventListener('pointermove',e=>{
-    if(pointers.has(e.pointerId)) pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    const prev=pointers.get(e.pointerId);
+    if(!prev) return;
     if(pinch && pointers.size===2){
+      pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
       e.preventDefault();
       const [a,b]=[...pointers.values()], r=topoVP.getBoundingClientRect();
       const mx=(a.x+b.x)/2-r.left, my=(a.y+b.y)/2-r.top;
@@ -1227,16 +1283,27 @@
       clampMap(); applyMap();
       return;
     }
-    if(dragging && e.pointerType==='mouse'){ zTx+=e.movementX; zTy+=e.movementY; clampMap(); applyMap(); }
+    if(dragging && pointers.size===1){
+      // delta from the previous stored position (movementX/Y is unreliable for touch)
+      zTx+=e.clientX-prev.x; zTy+=e.clientY-prev.y;
+      pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
+      applyDrag();
+      return;
+    }
+    pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
   });
   const dropPointer=e=>{
+    const wasDragging=dragging, wasPinch=!!pinch;
     pointers.delete(e.pointerId);
     if(pointers.size<2) pinch=null;
-    if(pointers.size===0){ dragging=false; topoVP.classList.remove('grabbing'); }
+    if(pointers.size===0){
+      dragging=false; topoVP.classList.remove('grabbing');
+      if(wasDragging||wasPinch) springBack(); // settle any overscroll back into range
+    }
   };
   topoVP.addEventListener('pointerup',dropPointer);
   topoVP.addEventListener('pointercancel',dropPointer);
-  window.addEventListener('resize',()=>{ if(!panelMap.hidden) fitMap(); });
+  window.addEventListener('resize',()=>{ if(!panelMap.hidden) relayout(); });
   fitMap();
 
   // ---- fullscreen expand for the whole interactive tool ----
@@ -1250,7 +1317,7 @@
     document.body.classList.toggle('noscroll',ex);
     const label=ex?'Exit full screen':'Expand to full screen';
     expandBtn.setAttribute('aria-label',label); expandBtn.title=label;
-    requestAnimationFrame(()=>{ if(!panelMap.hidden) fitMap(); });
+    requestAnimationFrame(()=>{ if(!panelMap.hidden) relayout(); });
   });
 
   // ---- one-page "quick card" print ----

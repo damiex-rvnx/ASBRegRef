@@ -464,7 +464,18 @@
   .zoomhint{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-3);text-align:center;margin-top:8px;letter-spacing:.04em}
 
   /* expand / fullscreen */
-  .vb-right{display:flex;align-items:center;gap:14px}
+  .vb-right{display:flex;align-items:center;gap:10px}
+  .cardbtn{
+    display:inline-flex;align-items:center;justify-content:center;gap:7px;
+    height:34px;padding:0 12px;border-radius:9px;cursor:pointer;
+    border:1px solid var(--line);background:var(--surface-2);color:var(--text-2);
+    font:600 12px/1 'Inter',system-ui,sans-serif;letter-spacing:.01em;
+    transition:all .18s ease;flex-shrink:0;
+  }
+  .cardbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .cardbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .cardbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  @media(max-width:520px){ .cardbtn-t{display:none} .cardbtn{width:34px;padding:0} }
   .expandbtn{
     display:inline-flex;align-items:center;justify-content:center;gap:6px;
     width:34px;height:34px;border-radius:9px;cursor:pointer;
@@ -561,7 +572,19 @@
     .glow,.offline-bar,.tabs,.chev,.drop-head .chev,header .sub,header .badge-row{display:none}
     header{padding:0 0 10px;border:0;background:none}
     header h1{font-size:24px}
-    section:has(.tool),section:has(.gate),section:has(.fr){display:none} /* hide tool, gate, friable split */
+    section:has(.tool){display:none} /* hide only the interactive tool; keep gate + friable split */
+    /* the 1% gate, printed */
+    .gate{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;margin-top:6px;background:var(--surface-3);position:relative;break-inside:avoid}
+    .gate .mark{font-weight:800;font-size:15px;color:var(--accent);display:inline-block;margin-bottom:2px}
+    .gate p{font-size:9.5px;line-height:1.55;margin:0}
+    /* friable vs non-friable split, two columns */
+    .fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .fr-card{border:1px solid var(--line);border-radius:var(--r);padding:11px 13px;break-inside:avoid}
+    .fr-card .cap{font-weight:800;font-size:11px;letter-spacing:.05em;margin-bottom:5px}
+    .fr-card .desc{font-size:9px;margin:0 0 7px}
+    .fr-card ul{margin:0;padding-left:15px}
+    .fr-card li{font-size:9px;line-height:1.5;margin-bottom:4px}
+    .flip,.flag{break-inside:avoid;margin-top:10px;padding:9px 11px;font-size:9px}
     main{padding:0}
     section{margin-top:14px}
     .sec-label{margin-bottom:4px}
@@ -594,6 +617,55 @@
     footer p{font-size:9px;line-height:1.7}
     .dcard,.district,.flag,.d-caution,.fact,footer{break-inside:avoid}
     a{color:var(--accent)}
+
+    /* ── Quick card: one-page truck sheet ───────────────────────────────
+       Triggered by the "Quick card" button (body.printcard). Shows only the
+       1% gate, the friable/non-friable split, and the three disposal routes,
+       plus a compact disclaimer. No districts, no sources, no field notes. */
+    body.printcard header h1{font-size:18px}
+    body.printcard header{padding:0 0 6px}
+    /* hide everything in main except the three keeper sections */
+    body.printcard main>section{display:none}
+    /* >.gate is the real 1% gate box (a direct child); avoids the .tnode.gate
+       map node that lives inside the interactive tool section */
+    body.printcard main>section:has(>.gate),
+    body.printcard main>section:has(.fr),
+    body.printcard main>section:has(.disp){display:block;margin-top:9px}
+    /* trim the split section's extras on the card */
+    body.printcard .fr-card .desc,
+    body.printcard .flip,
+    body.printcard .flag,
+    body.printcard .cite,
+    body.printcard .sec-sub,
+    body.printcard .sec-label,
+    body.printcard .trig{display:none}
+    body.printcard main>section:has(>.gate),
+    body.printcard main>section:has(.fr),
+    body.printcard main>section:has(.disp){margin-top:7px}
+    body.printcard h2{font-size:11px;margin-bottom:3px}
+    body.printcard .gate{padding:8px 11px}
+    body.printcard .gate .mark{font-size:13px;margin-bottom:1px}
+    body.printcard .gate p{font-size:8px;line-height:1.4}
+    body.printcard .fr{gap:8px}
+    body.printcard .fr-card{padding:8px 10px}
+    body.printcard .fr-card .cap{font-size:10px;margin-bottom:3px}
+    body.printcard .fr-card ul{padding-left:13px}
+    body.printcard .fr-card li{font-size:8px;line-height:1.38;margin-bottom:2px}
+    body.printcard .disp{gap:8px}
+    body.printcard .dcard{padding:8px 10px}
+    body.printcard .dcard ol{gap:3px}
+    body.printcard .dcard li{font-size:8px;padding-left:16px;line-height:1.38}
+    body.printcard .dcard h4{font-size:10px;margin-bottom:4px}
+    body.printcard .d-caution{padding:6px 8px;font-size:7.5px;margin-top:5px}
+    body.printcard .lnk::after,body.printcard .dlink::after{display:none} /* no URL tails on the card */
+    /* footer: keep the disclaimer only, drop sources / verified line.
+       font-size:0 collapses the bare text nodes and .src spans; .disc alone
+       gets a real size back. */
+    body.printcard footer{margin-top:8px}
+    body.printcard footer p{font-size:0}
+    body.printcard footer p>br,
+    body.printcard footer .src{display:none}
+    body.printcard footer .disc{font-size:8px;line-height:1.55}
   }
 </style>
 </head>
@@ -670,6 +742,10 @@
         </div>
         <div class="vb-right">
           <span class="viewhint" id="viewHint">Watch the load travel its route</span>
+          <button class="cardbtn" id="cardBtn" aria-label="Print one-page quick card" title="Print one-page quick card">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a1 1 0 0 1-1-1v-5a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1h-2M8 14h8v7H8z"/></svg>
+            <span class="cardbtn-t">Quick card</span>
+          </button>
           <button class="expandbtn" id="expandBtn" aria-label="Expand to full screen" title="Expand to full screen">
             <svg class="i-expand" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4M16 3h4a1 1 0 0 1 1 1v4M8 21H4a1 1 0 0 1-1-1v-4M16 21h4a1 1 0 0 0 1-1v-4"/></svg>
             <svg class="i-collapse" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h5V3M21 8h-5V3M3 16h5v5M21 16h-5v5"/></svg>
@@ -937,7 +1013,7 @@
       <span class="src">Kustom Ventura Division · PM / Superintendent field reference</span><br>
       Sources: SCAQMD / AVAQMD Rule 1403 · VCAPCD Rule 62.7 &amp; Rule 45.2 · 40 CFR 61 Subpart M (Asbestos NESHAP) · Cal/OSHA 8 CCR 1529, 341.6–341.14<br>
       <span class="src">Last verified: 2026-09-02.</span> The 10-day disposal window is a Kustom SOP / facility requirement, not a district rule. Fees change annually — confirm current amounts before filing.<br><br>
-      General regulatory reference, not a compliance determination. Defer to your project's industrial hygienist / CAC directive, current rule text, and the receiving facility's acceptance criteria. Thresholds and notification windows change — verify against the linked district rules before filing.
+      <span class="disc">General regulatory reference, not a compliance determination. Defer to your project's industrial hygienist / CAC directive, current rule text, and the receiving facility's acceptance criteria. Thresholds and notification windows change — verify against the linked district rules before filing.</span>
     </p>
   </footer>
 </main>
@@ -1175,6 +1251,17 @@
     const label=ex?'Exit full screen':'Expand to full screen';
     expandBtn.setAttribute('aria-label',label); expandBtn.title=label;
     requestAnimationFrame(()=>{ if(!panelMap.hidden) fitMap(); });
+  });
+
+  // ---- one-page "quick card" print ----
+  // Sets a body class the print stylesheet keys off, then prints. beforeprint
+  // (below) opens the collapsed <details> so the split + routes are visible.
+  const cardBtn=document.getElementById('cardBtn');
+  const clearCard=()=>document.body.classList.remove('printcard');
+  cardBtn.addEventListener('click',()=>{
+    document.body.classList.add('printcard');
+    window.addEventListener('afterprint',clearCard,{once:true});
+    window.print();
   });
 
   const tabs=document.querySelectorAll('.tabs button');

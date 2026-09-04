@@ -1174,13 +1174,18 @@
   const EPS=1e-4;
   const reduceMotion=matchMedia('(prefers-reduced-motion:reduce)');
 
-  // Resting pan range (no overscroll). Content springs back into this.
+  // Resting pan range. Content springs back into this. Once zoomed in, the
+  // range is padded so you can pan a comfortable gap of empty space past every
+  // edge — nodes near the frame don't feel cramped. At fit there's no padding.
   function ranges(){
     const vw=topoVP.clientWidth||STAGE_W, vh=topoVP.clientHeight||STAGE_H;
     const sw=STAGE_W*zScale, sh=STAGE_H*zScale;
-    const Mx=Math.min(72, vw*0.1), My=Math.min(56, vh*0.1);   // overscroll margins
-    const loX = sw<=vw ? (vw-sw)/2 : vw-sw, hiX = sw<=vw ? (vw-sw)/2 : 0;
-    const loY = sh<=vh ? (vh-sh)/2 : vh-sh, hiY = sh<=vh ? (vh-sh)/2 : 0;
+    const Mx=Math.min(72, vw*0.1), My=Math.min(56, vh*0.1);   // overscroll (rubber-band) margins
+    const zoomed = zScale>zMin+EPS;
+    const padX = zoomed ? Math.min(140, vw*0.18) : 0;         // resting breathing room, zoomed only
+    const padY = zoomed ? Math.min(120, vh*0.24) : 0;
+    const loX = sw<=vw ? (vw-sw)/2-padX : vw-sw-padX, hiX = (sw<=vw ? (vw-sw)/2 : 0)+padX;
+    const loY = sh<=vh ? (vh-sh)/2-padY : vh-sh-padY, hiY = (sh<=vh ? (vh-sh)/2 : 0)+padY;
     return {vw,vh,sw,sh,Mx,My,loX,hiX,loY,hiY};
   }
   // hard clamp zTx/zTy into the resting range (used by pinch, wheel-zoom, fit)
@@ -1242,6 +1247,10 @@
     zoomAt(e.clientX-r.left, e.clientY-r.top, d<0?1.12:1/1.12);
   },{passive:false});
 
+  // Hard stop on drag-selecting the diagram's labels. user-select:none isn't
+  // enough on every engine, so cancel the native selection gesture outright —
+  // except when it starts on a destination link, which stays selectable/clickable.
+  topoVP.addEventListener('selectstart',e=>{ if(!e.target.closest('a')) e.preventDefault(); });
   // Block the page's own pinch-zoom / two-finger scroll while gesturing on the map.
   topoVP.addEventListener('touchmove',e=>{ if(e.touches.length>=2) e.preventDefault(); },{passive:false});
   // Safari desktop/iOS pinch (feature-detected — GestureEvent isn't on other engines).

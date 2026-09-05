@@ -397,7 +397,7 @@
   /* ---------- process / topology map (pan + zoom) ---------- */
   .topo{position:relative;overflow:hidden;width:100%;height:480px;cursor:grab;touch-action:pan-y;border-radius:12px;background:rgba(0,0,0,.12);user-select:none;-webkit-user-select:none}
   .topo *{user-select:none;-webkit-user-select:none}
-  .topo.zoomed{touch-action:none} /* once zoomed, own the gesture so the page doesn't move */
+  .topo.ownpan{touch-action:none} /* when the map overflows vertically, own the gesture */
   .topo.grabbing{cursor:grabbing}
   .topo-stage{position:relative;width:1640px;height:660px;transform-origin:0 0}
   .topo-stage.spring{transition:transform .18s cubic-bezier(.22,.61,.36,1)} /* eased spring-back after an overscroll drag */
@@ -489,6 +489,21 @@
   }
   .topotip.show{opacity:1;transform:none}
   .tnode,.tpill{cursor:default}
+
+  /* overview toggle — sits in the map's corner, above the panning stage */
+  .mapbtn{
+    position:absolute;top:9px;right:9px;z-index:16;
+    display:inline-flex;align-items:center;gap:6px;
+    font:600 11px/1 'Inter',system-ui,sans-serif;letter-spacing:.01em;
+    padding:7px 10px;border-radius:9px;cursor:pointer;
+    background:color-mix(in srgb,var(--surface-2) 88%,transparent);
+    border:1px solid var(--line-bright);color:var(--text-2);
+    -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  }
+  .mapbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .mapbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .mapbtn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .mapbtn[hidden]{display:none}
 
   /* expand / fullscreen */
   .vb-right{display:flex;align-items:center;gap:10px}
@@ -782,8 +797,8 @@
 
       <div class="readout">
         <div class="panel" id="panelMap">
-          <p class="visually-hidden">Visual pan-and-zoom route map. The same routing is available as text — switch to the Readout view above, which updates as you change the three variables.</p>
-          <div class="topo" id="topoViewport" aria-hidden="true">
+          <p class="visually-hidden">Route map — a decision tree from a new job to the landfill. New job, then Sampling, then the 1% gate. At or below 1% the material is not regulated and goes to a construction-debris landfill, with a caution that anything over 0.1% is still ACCM for Cal/OSHA. Over 1% it branches on quantity — 100 square feet or 100 linear feet triggers a 10-working-day advance notice to the air district with jurisdiction — and separately on friability: friable goes to Kettleman Hills with labels, a manifest, and a Kustom 10-day-to-Kettleman disposal window, while non-friable goes to Simi Valley with no manifest. Every branch is drawn; the ones matching your three selections are highlighted. Each card can be focused with the arrow keys for its detail. The same routing is available as plain text in the Readout view above.</p>
+          <div class="topo" id="topoViewport" role="group" aria-label="Route map decision tree — use arrow keys to move between cards, Escape to dismiss a detail">
             <div class="topo-stage" id="topo">
               <svg class="topo-svg" viewBox="0 0 1640 660" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                 <defs>
@@ -832,7 +847,7 @@
               </div>
 
               <!-- content fork -->
-              <div class="tnode card c-ok" id="nLe" data-tip="At or below 1% it is not regulated ACM. Area and friability no longer matter — it disposes as ordinary construction debris." style="left:636px;top:114px;width:158px;height:70px">
+              <div class="tnode card c-ok" id="nLe" data-tip="At or below 1% it is not regulated ACM — the area and friability questions no longer apply, and it disposes as ordinary construction debris. Caution: anything over 0.1% is still ACCM, so Cal/OSHA worker-protection rules apply even though the air district doesn't." style="left:636px;top:114px;width:158px;height:70px">
                 <div class="st">≤ 1%</div><div class="ss">not regulated</div>
               </div>
               <div class="tnode card c-accent" id="nGt" data-tip="Over 1% is regulated ACM: full Cal/OSHA controls and asbestos disposal. Now the area and friability questions apply." style="left:636px;top:404px;width:158px;height:70px">
@@ -843,8 +858,8 @@
               <div class="tnode card c-ok" id="nA1" data-tip="Under 100 ft² / 100 linear ft — exempt from advance air-district notification. Handling and disposal still apply in full." style="left:860px;top:300px;width:160px;height:72px">
                 <div class="st">&lt; 100 ft²</div><div class="ss">notice exempt</div>
               </div>
-              <div class="tnode card c-alert" id="nA2" data-tip="100 ft² / 100 linear ft or more — file advance notification with the air district (AQMD / APCD) 10 working days before start." style="left:860px;top:472px;width:182px;height:86px">
-                <div class="st">≥ 100 ft²</div><div class="ss">10-day notice · air district</div>
+              <div class="tnode card c-alert" id="nA2" data-tip="100 ft² / 100 linear ft or more — file advance notification 10 working days before work starts. It goes to the air district with jurisdiction over the job site, which is why this guide carries three district panels (SCAQMD · AVAQMD · VCAPCD). Rule 1403 / Rule 62.7." style="left:860px;top:472px;width:182px;height:86px">
+                <div class="st">≥ 100 ft²</div><div class="ss">10 working days · air-district notice</div>
               </div>
 
               <!-- friability fork (disposal) -->
@@ -871,13 +886,18 @@
                 <a class="dlink" tabindex="-1" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">Directions ↗</a>
               </div>
 
-              <span class="tpill on-ok" id="pillDeb" data-tip="Plain double-bag poly — no asbestos labels, stickers, or manifest." style="left:1150px;top:122px">PLAIN DOUBLE-BAG</span>
+              <span class="tpill on-ok" id="pillDeb" data-tip="Plain double-bag poly — no asbestos labels, stickers, or manifest. Keep the non-ACM lab letter with the load." style="left:1120px;top:122px">PLAIN DOUBLE-BAG</span>
+              <span class="tpill on-warn" id="pillAccm" data-tip="Caution — over 0.1% asbestos is asbestos-containing construction material (ACCM). Cal/OSHA worker-protection rules (8 CCR 1529) still apply below the 1% air-district line: registration for ≥ 100 ft² of ACCM, a Report of Use below that." style="left:940px;top:178px">⚠ &gt; 0.1% = ACCM</span>
               <span class="tpill on-alert dim" id="pillKetPack" data-tip="Title 22 HW container marking + Cal/OSHA warning labels, and a uniform hazardous-waste manifest with California LDR certification." style="left:1345px;top:322px">LABELS + MANIFEST</span>
-              <span class="tpill on-alert dim" id="pillKetWin" data-tip="Kustom SOP: get it to Kettleman within 10 days of removal — tighter than the Title 22 accumulation window. Separate from the air-district notice." style="left:1345px;top:352px">⚑ 10-DAY WINDOW</span>
+              <span class="tpill on-alert dim" id="pillKetWin" data-tip="Kustom SOP (company practice, not a district rule): get the load to Kettleman within 10 days of removal — tighter than the Title 22 accumulation window. This is the disposal clock, completely separate from the air-district notification." style="left:1345px;top:352px">⚑ KETTLEMAN · 10 DAYS</span>
               <span class="tpill on-alert dim" id="pillKetCount" data-tip="Count and weight-label every bag before it leaves — the manifest and the facility both need the tally." style="left:1345px;top:382px">COUNT + WEIGH BAGS</span>
               <span class="tpill on-warn dim" id="pillSimi" data-tip="Non-friable is nonhazardous for disposal — no manifest. But check Cal/OSHA 1529(k) warning labels where the crew disturbs it." style="left:1345px;top:552px">NO MANIFEST · SEE 1529(k)</span>
             </div>
-            <div class="topotip" id="topoTip" hidden></div>
+            <button class="mapbtn" id="fitBtn" type="button" aria-label="Fit the whole map in view">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H4a1 1 0 0 0-1 1v4M16 3h4a1 1 0 0 1 1 1v4M8 21H4a1 1 0 0 1-1-1v-4M16 21h4a1 1 0 0 0 1-1v-4"/></svg>
+              <span id="fitBtnT">Fit all</span>
+            </button>
+            <div class="topotip" id="topoTip" role="tooltip" aria-hidden="true" hidden></div>
           </div>
           <div class="zoomhint">Tap or hover a card for detail · pinch or Shift&nbsp;+&nbsp;scroll to zoom · drag to pan</div>
         </div>
@@ -1091,7 +1111,7 @@
   const cUp=$('cUp'),cDown=$('cDown'),cDeb=$('cDeb'),cA1=$('cA1'),cA2=$('cA2'),cJ1=$('cJ1'),cJ2=$('cJ2'),cF=$('cF'),cN=$('cN'),cKet=$('cKet'),cSimi=$('cSimi');
   const pkDeb=$('pkDeb'),pkKet=$('pkKet'),pkSimi=$('pkSimi');
   const destDeb=$('destDeb'),destKet=$('destKet'),destSimi=$('destSimi');
-  const pillDeb=$('pillDeb'),pillKetPack=$('pillKetPack'),pillKetWin=$('pillKetWin'),pillKetCount=$('pillKetCount'),pillSimi=$('pillSimi');
+  const pillDeb=$('pillDeb'),pillAccm=$('pillAccm'),pillKetPack=$('pillKetPack'),pillKetWin=$('pillKetWin'),pillKetCount=$('pillKetCount'),pillSimi=$('pillSimi');
   const setBranch=(el,grp,on)=>{el.setAttribute('class','conn '+grp+(on?' on flow':' dim'));};
   const setNode=(el,on)=>{el.classList.toggle('dim',!on);el.classList.toggle('on',on);};
   const segArea=document.querySelector('.seg[data-group="area"]'),
@@ -1172,6 +1192,7 @@
     setBranch(cDeb,'g-a',aOn);pkDeb.classList.toggle('on',aOn);
     setNode(destDeb,aOn);
     pillDeb.classList.toggle('dim',!aOn);
+    pillAccm.classList.toggle('dim',!aOn);
 
     // >1% -> area fork (notification). Selected area card + its run to the junction light up.
     setNode(nA1,a1On); setNode(nA2,a2On);
@@ -1223,6 +1244,7 @@
   // ---- route map: pan + zoom (shift+scroll or drag on desktop, pinch + drag on touch) ----
   const STAGE_W=1640, STAGE_H=660;
   const topoVP=document.getElementById('topoViewport'), topoStage=document.getElementById('topo');
+  const fitBtn=document.getElementById('fitBtn'), fitBtnT=document.getElementById('fitBtnT');
   let zScale=1, zTx=0, zTy=0, zMin=1, zMax=1.8;
   const EPS=1e-4;
   const reduceMotion=matchMedia('(prefers-reduced-motion:reduce)');
@@ -1252,7 +1274,22 @@
   }
   function applyMap(){
     topoStage.style.transform=`translate(${zTx}px,${zTy}px) scale(${zScale})`;
-    topoVP.classList.toggle('zoomed', zScale>zMin+EPS); // toggles touch-action
+    // Own the gesture only when the map overflows vertically; when it fits the
+    // viewport height, keep pan-y so a vertical swipe still scrolls the page
+    // (horizontal swipes pan the map to follow the route).
+    const vh=topoVP.clientHeight||STAGE_H;
+    topoVP.classList.toggle('ownpan', STAGE_H*zScale > vh+1);
+    updateFitBtn();
+  }
+  function updateFitBtn(){
+    if(!fitBtn) return;
+    const vw=topoVP.clientWidth||STAGE_W, wholeFit=Math.min(1, vw/STAGE_W);
+    const needed = wholeFit < zMin-1e-4;   // can't show the whole map legibly at once
+    fitBtn.hidden = !needed;
+    if(needed){
+      const label = zScale<=wholeFit+0.02 ? 'Follow route' : 'Fit all';
+      if(fitBtnT.textContent!==label) fitBtnT.textContent=label;
+    }
   }
   // damped rubber-band: beyond the edge, movement is 0.35× and capped at the margin
   const damp=(pos,lo,hi,M)=> pos<lo ? lo-Math.min(M,(lo-pos)*0.35)
@@ -1273,19 +1310,52 @@
     function fin(){ clearTimeout(t); topoStage.classList.remove('spring'); topoStage.removeEventListener('transitionend',fin); }
     topoStage.addEventListener('transitionend',fin);
   }
-  function fitMap(){
+  // Legibility floor: the most zoomed-OUT scale at which node titles stay
+  // readable. Derived from the title size (13px in stage units) and a target
+  // rendered size, not a magic number — below this the map would be a blur.
+  const LABEL_BASE=13, LABEL_TARGET=7.5;
+  function updateBounds(){
     const vw=topoVP.clientWidth||STAGE_W;
-    // fit to width, but keep a floor so the map isn't microscopic on phones
-    // (below the floor it overflows and can be panned / pinch-zoomed).
-    zMin=Math.min(1, Math.max(0.15, vw/STAGE_W)); zMax=Math.max(zMin*2, 1.7);
-    zScale=zMin; clampMap(); applyMap();
+    const wholeFit=Math.min(1, vw/STAGE_W);          // scale that shows the whole width
+    const legFloor=Math.min(1, LABEL_TARGET/LABEL_BASE);
+    // Never zoom out past legibility; but if the whole map already fits and is
+    // legible (wide screens), let the floor be the whole-map fit.
+    zMin=Math.min(1, Math.max(wholeFit, legFloor));
+    zMax=Math.max(zMin*1.9, 1.7);
+    return {wholeFit};
   }
-  // re-fit on resize/expand but preserve the current zoom when the user has zoomed in
+  // vertical centre of the currently-lit nodes (for framing the active route)
+  function activeCenterY(){
+    const lit=[...topoStage.querySelectorAll('.tnode:not(.dim)')];
+    if(!lit.length) return STAGE_H/2;
+    let a=1e9,b=-1e9;
+    lit.forEach(n=>{const t=parseFloat(n.style.top)||0,h=parseFloat(n.style.height)||0;a=Math.min(a,t);b=Math.max(b,t+h);});
+    return (a+b)/2;
+  }
+  // initial / view-switch framing. Whole map when it's legible; otherwise the
+  // legibility floor, parked at the route start so you pan left→right to follow.
+  function fitMap(){
+    const {wholeFit}=updateBounds();
+    const vh=topoVP.clientHeight||STAGE_H;
+    if(wholeFit>=zMin-EPS){ zScale=wholeFit; zTx=0; zTy=0; }
+    else { zScale=zMin; zTx=0; zTy=vh/2 - activeCenterY()*zScale; }
+    clampMap(); applyMap();
+  }
+  // overview: show the whole tree even below the legibility floor (labels go
+  // small, but you get the shape). A pinch / wheel afterwards returns to floor.
+  function fitAll(){
+    hideTip();
+    const vw=topoVP.clientWidth||STAGE_W, vh=topoVP.clientHeight||STAGE_H;
+    zScale=Math.min(1, vw/STAGE_W);
+    zTx=(vw-STAGE_W*zScale)/2; zTy=(vh-STAGE_H*zScale)/2;
+    applyMap();
+  }
+  // resize / expand: keep the user's zoom if they zoomed in, else re-frame
   function relayout(){
-    const vw=topoVP.clientWidth||STAGE_W;
     const wasFit = zScale<=zMin+EPS;
-    zMin=Math.min(1, Math.max(0.15, vw/STAGE_W)); zMax=Math.max(zMin*2, 1.7);
-    zScale = wasFit ? zMin : Math.min(zMax, Math.max(zMin, zScale));
+    updateBounds();
+    if(wasFit){ fitMap(); return; }
+    zScale=Math.min(zMax, Math.max(zMin, zScale));
     clampMap(); applyMap();
   }
   // zoom around a viewport-space point (vx,vy)
@@ -1320,14 +1390,17 @@
   let dragging=false, pinch=null, tapCand=null;
   const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
   topoVP.addEventListener('pointerdown',e=>{
-    if(e.target.closest('a')) return;   // keep destination links clickable / keyboard-reachable
+    if(e.target.closest('a,button')) return;   // keep links + the fit button working
     e.preventDefault();                 // stop text/image selection on drag
     topoStage.classList.remove('spring');
     hideTip();
     pointers.set(e.pointerId,{x:e.clientX,y:e.clientY});
     if(pointers.size===1) tapCand={id:e.pointerId,x:e.clientX,y:e.clientY,t:Date.now(),node:e.target.closest('[data-tip]')};
-    // mouse pans at any zoom; touch pans only once zoomed (at fit, touch-action:pan-y scrolls the page)
-    if(pointers.size===1 && (e.pointerType==='mouse' || zScale>zMin+EPS)){
+    // mouse always pans; touch pans whenever the map overflows the viewport
+    // (that's how you follow the route left→right at the default zoom)
+    const vw=topoVP.clientWidth||STAGE_W, vh=topoVP.clientHeight||STAGE_H;
+    const overflow = STAGE_W*zScale>vw+1 || STAGE_H*zScale>vh+1;
+    if(pointers.size===1 && (e.pointerType==='mouse' || overflow)){
       dragging=true; topoVP.classList.add('grabbing');
       try{topoVP.setPointerCapture(e.pointerId);}catch(_){}
     }
@@ -1404,9 +1477,41 @@
     tipTimer=setTimeout(()=>{ topoTip.hidden=true; },160);
   }
   function toggleTip(node){ tipNode===node ? hideTip() : showTip(node); }
-  document.querySelectorAll('#topo [data-tip]').forEach(el=>{
+
+  // Make every card/pill reachable by hover, tap, and keyboard, and readable by a
+  // screen reader. One roving tab stop for the whole map; arrows move between cards;
+  // the detail is exposed as an aria description so SR users get it on focus.
+  const tipEls=[...document.querySelectorAll('#topo [data-tip]')];
+  const focusCard=j=>{ tipEls.forEach((x,k)=>x.tabIndex=k===j?0:-1); tipEls[j].focus(); };
+  tipEls.forEach((el,i)=>{
+    const label=(el.querySelector('.st')?.textContent||el.textContent).trim();
+    el.setAttribute('role','button');
+    el.setAttribute('aria-label',label);
+    el.tabIndex = i===0?0:-1;
+    const desc=document.createElement('span');
+    desc.className='visually-hidden'; desc.id='tipdesc'+i; desc.textContent=el.getAttribute('data-tip');
+    el.appendChild(desc); el.setAttribute('aria-describedby',desc.id);
     el.addEventListener('mouseenter',()=>{ if(!dragging && !pinch) showTip(el); });
     el.addEventListener('mouseleave',hideTip);
+    el.addEventListener('focus',()=>{ if(el.matches(':focus-visible')) showTip(el); });
+    el.addEventListener('blur',hideTip);
+    el.addEventListener('keydown',e=>{
+      if(e.key==='Escape'){ hideTip(); return; }
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggleTip(el); return; }
+      let d=0;
+      if(e.key==='ArrowRight'||e.key==='ArrowDown') d=1;
+      else if(e.key==='ArrowLeft'||e.key==='ArrowUp') d=-1;
+      else if(e.key==='Home'){ e.preventDefault(); focusCard(0); return; }
+      else if(e.key==='End'){ e.preventDefault(); focusCard(tipEls.length-1); return; }
+      else return;
+      e.preventDefault(); focusCard((i+d+tipEls.length)%tipEls.length);
+    });
+  });
+
+  // Fit-all / follow-route overview toggle
+  fitBtn.addEventListener('click',()=>{
+    const vw=topoVP.clientWidth||STAGE_W, wholeFit=Math.min(1, vw/STAGE_W);
+    (zScale<=wholeFit+0.02) ? fitMap() : fitAll();   // at overview -> back to route, else -> overview
   });
 
   window.addEventListener('resize',()=>{ hideTip(); if(!panelMap.hidden) relayout(); });

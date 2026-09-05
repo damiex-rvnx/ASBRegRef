@@ -70,3 +70,12 @@ Notes for editors:
 Everything lives in `index.html`: content, styles, and one small script. The JS
 is intentionally a single `state` object with `render()` and `updateRoadmap()` —
 keep that pattern; don't introduce modules, classes, a framework, or a build step.
+
+## Planned (not built yet)
+
+- **Protocol path.** A second view, reached from a top-level menu that toggles
+  between a **Disposal path** (the current route map) and a **Protocol path**.
+  The protocol view would map the work-practice requirements for a job —
+  decontamination, plastic layering, equipment, and the asbestos work classes —
+  with the map keyed to job type and friability. This is a future project; the
+  current release ships the disposal path only.

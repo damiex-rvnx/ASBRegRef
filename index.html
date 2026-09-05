@@ -399,9 +399,9 @@
   .topo *{user-select:none;-webkit-user-select:none}
   .topo.zoomed{touch-action:none} /* once zoomed, own the gesture so the page doesn't move */
   .topo.grabbing{cursor:grabbing}
-  .topo-stage{position:relative;width:1500px;height:560px;transform-origin:0 0}
+  .topo-stage{position:relative;width:1640px;height:660px;transform-origin:0 0}
   .topo-stage.spring{transition:transform .18s cubic-bezier(.22,.61,.36,1)} /* eased spring-back after an overscroll drag */
-  .topo-svg{position:absolute;inset:0;width:1500px;height:560px;overflow:visible;pointer-events:none;-webkit-user-drag:none}
+  .topo-svg{position:absolute;inset:0;width:1640px;height:660px;overflow:visible;pointer-events:none;-webkit-user-drag:none}
   .topo .sic,.topo .sic *{-webkit-user-drag:none}
   @media(max-width:760px){.topo{height:400px}}
   .tool.is-expanded .topo{height:calc(100dvh - 340px);min-height:360px}
@@ -451,6 +451,18 @@
   .tnode.dest .ss{font-size:11px;color:var(--text-2);margin-top:3px}
   .dlink{margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:700;color:var(--dc);text-decoration:none;letter-spacing:.04em}
   .dlink:hover{text-decoration:underline}
+
+  /* decision cards — the variable forks (content / area / friability) */
+  .tnode.card{padding:10px 13px;gap:2px;--cc:var(--line)}
+  .tnode.card{border-color:var(--cc)}
+  .tnode.card .st{font-size:13px}
+  .tnode.card .ss{font-size:9.5px;color:var(--cc)}
+  .tnode.card.c-accent{--cc:var(--accent)} .tnode.card.c-accent .st{color:var(--accent)}
+  .tnode.card.c-ok{--cc:var(--ok)}
+  .tnode.card.c-alert{--cc:var(--alert)}
+  .tnode.card.c-warn{--cc:var(--warn)}
+  .tnode.card.on{box-shadow:0 0 0 1px var(--cc),0 12px 26px -16px var(--cc)}
+  .tnode.gate .st{font-size:12px;letter-spacing:.03em}
 
   .tpill{
     position:absolute;transform:translate(-50%,-50%);z-index:3;
@@ -762,66 +774,97 @@
           <p class="visually-hidden">Visual pan-and-zoom route map. The same routing is available as text — switch to the Readout view above, which updates as you change the three variables.</p>
           <div class="topo" id="topoViewport" aria-hidden="true">
             <div class="topo-stage" id="topo">
-              <svg class="topo-svg" viewBox="0 0 1500 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+              <svg class="topo-svg" viewBox="0 0 1640 660" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
                 <defs>
                   <filter id="g" x="-60%" y="-60%" width="220%" height="220%">
                     <feGaussianBlur stdDeviation="3.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
                   </filter>
                 </defs>
                 <!-- spine: new job -> sampling -> 1% gate -->
-                <path class="conn spine flow" d="M194,230 H284"/>
-                <path class="conn spine flow" id="pSpine2" d="M454,230 H544"/>
-                <path class="conn spine flow" d="M724,230 H840"/>
-                <!-- ≤1% branch (up to debris) — rounded corners -->
-                <path class="conn g-a on flow" id="cDeb" d="M840,230 L840,132 Q840,120 852,120 L1260,120"/>
-                <!-- >1% shared trunk (down, rounded corner, then bus to friability split) -->
-                <path class="conn g-share dim" id="cShare" d="M840,230 L840,293 Q840,305 852,305 L1010,305"/>
-                <!-- friable branch (straight into Kettleman) -->
-                <path class="conn g-f dim" id="cKet" d="M1010,305 H1260"/>
-                <!-- non-friable branch (down to simi) — rounded corner at top AND bottom -->
-                <path class="conn g-n dim" id="cDownN" d="M998,305 Q1010,305 1010,317 L1010,473 Q1010,485 1022,485 L1260,485"/>
+                <path class="conn spine flow" d="M178,300 H238"/>
+                <path class="conn spine flow" id="pSpine2" d="M396,300 H452"/>
+                <!-- 1% gate -> content cards -->
+                <path class="conn g-a on flow" id="cUp" d="M570,300 H600 Q612,300 612,288 V161 Q612,149 624,149 H636"/>
+                <path class="conn g-share dim" id="cDown" d="M570,300 H600 Q612,300 612,312 V427 Q612,439 624,439 H636"/>
+                <!-- ≤1% -> debris -->
+                <path class="conn g-a on flow" id="cDeb" d="M794,148 H1440"/>
+                <!-- >1% -> area fork -->
+                <path class="conn g-share dim" id="cA1" d="M794,439 H818 Q830,439 830,427 V348 Q830,336 842,336 H860"/>
+                <path class="conn g-share dim" id="cA2" d="M794,439 H818 Q830,439 830,451 V503 Q830,515 842,515 H860"/>
+                <!-- area cards -> friability junction (x=1060) -->
+                <path class="conn g-share dim" id="cJ1" d="M1020,336 H1048 Q1060,336 1060,348 V440"/>
+                <path class="conn g-share dim" id="cJ2" d="M1042,515 H1048 Q1060,515 1060,503 V440"/>
+                <!-- junction -> friability cards -->
+                <path class="conn g-f dim" id="cF" d="M1060,440 V364 Q1060,352 1072,352 H1082"/>
+                <path class="conn g-n dim" id="cN" d="M1060,440 V540 Q1060,552 1072,552 H1082"/>
+                <!-- friability -> destinations -->
+                <path class="conn g-f dim" id="cKet" d="M1254,352 H1440"/>
+                <path class="conn g-n dim" id="cSimi" d="M1254,552 H1440"/>
                 <!-- travelling packets -->
                 <circle class="pkt-c c-accent on" r="4.8"><animateMotion dur="1.7s" repeatCount="indefinite"><mpath href="#pSpine2"/></animateMotion></circle>
-                <circle class="pkt-c c-ok on" id="pkDeb" r="4.8"><animateMotion dur="2.8s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
-                <circle class="pkt-c c-accent" id="pkShare" r="4.8"><animateMotion dur="2.2s" repeatCount="indefinite"><mpath href="#cShare"/></animateMotion></circle>
-                <circle class="pkt-c c-alert" id="pkKet" r="4.8"><animateMotion dur="2.1s" repeatCount="indefinite"><mpath href="#cKet"/></animateMotion></circle>
-                <circle class="pkt-c c-warn" id="pkDownN" r="4.8"><animateMotion dur="2.9s" repeatCount="indefinite"><mpath href="#cDownN"/></animateMotion></circle>
+                <circle class="pkt-c c-ok on" id="pkDeb" r="4.8"><animateMotion dur="3.0s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
+                <circle class="pkt-c c-alert" id="pkKet" r="4.8"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#cKet"/></animateMotion></circle>
+                <circle class="pkt-c c-warn" id="pkSimi" r="4.8"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#cSimi"/></animateMotion></circle>
               </svg>
 
-              <div class="tnode spine start" style="left:24px;top:180px;width:170px;height:100px">
+              <div class="tnode spine start" data-tip="Removal identified on a job. Confirm the scope, then sample before disturbing anything." style="left:20px;top:254px;width:158px;height:92px">
                 <span class="sic"><svg viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16" rx="2"/><path d="M9 4.5h6v3H9z"/><path d="M8.5 11.5h7M8.5 15h4.5"/></svg></span>
                 <div class="st">New job</div><div class="ss">removal identified</div>
               </div>
-              <div class="tnode spine" style="left:284px;top:180px;width:170px;height:100px">
+              <div class="tnode spine" data-tip="Lab test (PLM) for asbestos content. The percentage it reports is what sets the 1% gate below." style="left:238px;top:254px;width:158px;height:92px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M9.5 3h5M11 3v6.2L6.3 17.4A2 2 0 0 0 8 20.4h8a2 2 0 0 0 1.7-3L13 9.2V3"/><path d="M8.4 15h7.2"/></svg></span>
-                <div class="st">Sampling</div><div class="ss">lab test for asbestos</div>
+                <div class="st">Sampling</div><div class="ss">PLM lab test</div>
               </div>
-              <div class="tnode spine gate" id="stageGate" style="left:544px;top:180px;width:180px;height:100px">
+              <div class="tnode spine gate" id="stageGate" data-tip="1% by PLM is the regulated-ACM line for the air district and for how the waste is classified. Cal/OSHA is a separate track that starts far lower, at 0.1%." style="left:452px;top:258px;width:118px;height:84px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 3.2 20.8 12 12 20.8 3.2 12z"/></svg></span>
-                <div class="st">1% gate</div><div class="ss" id="gateSub">≤ 1% · not regulated</div>
+                <div class="st">1% GATE</div><div class="ss">PLM result</div>
               </div>
 
-              <div class="tnode dest deb on" id="destDeb" style="left:1260px;top:60px;width:220px;height:120px">
-                <span class="sic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5.4A1.4 1.4 0 0 1 10.9 4h2.2a1.4 1.4 0 0 1 1.4 1.4V7M6.5 7l.9 12.2a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L18.5 7"/><path d="M10.5 11v6M13.5 11v6"/></svg></span>
-                <div class="st">Debris landfill</div><div class="ss">≤ 1% · any accepting site</div>
+              <!-- content fork -->
+              <div class="tnode card c-ok" id="nLe" data-tip="At or below 1% it is not regulated ACM. Area and friability no longer matter — it disposes as ordinary construction debris." style="left:636px;top:114px;width:158px;height:70px">
+                <div class="st">≤ 1%</div><div class="ss">not regulated</div>
               </div>
-              <div class="tnode dest ket dim" id="destKet" style="left:1260px;top:240px;width:220px;height:130px">
+              <div class="tnode card c-accent" id="nGt" data-tip="Over 1% is regulated ACM: full Cal/OSHA controls and asbestos disposal. Now the area and friability questions apply." style="left:636px;top:404px;width:158px;height:70px">
+                <div class="st">&gt; 1%</div><div class="ss">regulated ACM</div>
+              </div>
+
+              <!-- area fork (notification) -->
+              <div class="tnode card c-ok" id="nA1" data-tip="Under 100 ft² / 100 linear ft — exempt from advance air-district notification. Handling and disposal still apply in full." style="left:860px;top:300px;width:160px;height:72px">
+                <div class="st">&lt; 100 ft²</div><div class="ss">notice exempt</div>
+              </div>
+              <div class="tnode card c-alert" id="nA2" data-tip="100 ft² / 100 linear ft or more — file advance notification with the air district (AQMD / APCD) 10 working days before start." style="left:860px;top:472px;width:182px;height:86px">
+                <div class="st">≥ 100 ft²</div><div class="ss">10-day notice · air district</div>
+              </div>
+
+              <!-- friability fork (disposal) -->
+              <div class="tnode card c-alert" id="nFri" data-tip="Crumbles by hand. Friable &gt; 1% is Title 22 hazardous waste → Kettleman, with labels, a manifest, and a registered hauler over 50 lb." style="left:1082px;top:316px;width:172px;height:72px">
+                <div class="st">Friable</div><div class="ss">Title 22 HW</div>
+              </div>
+              <div class="tnode card c-warn" id="nNon" data-tip="Intact / bonded. Non-friable is nonhazardous for disposal → Simi. No manifest — but Cal/OSHA labels can still apply where the crew disturbs it." style="left:1082px;top:516px;width:172px;height:72px">
+                <div class="st">Non-friable</div><div class="ss">nonhazardous</div>
+              </div>
+
+              <!-- destinations -->
+              <div class="tnode dest deb on" id="destDeb" data-tip="Any construction-debris landfill that accepts the material. Keep the non-ACM lab letter with the load." style="left:1440px;top:100px;width:184px;height:96px">
+                <span class="sic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5.4A1.4 1.4 0 0 1 10.9 4h2.2a1.4 1.4 0 0 1 1.4 1.4V7M6.5 7l.9 12.2a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L18.5 7"/><path d="M10.5 11v6M13.5 11v6"/></svg></span>
+                <div class="st">Debris landfill</div><div class="ss">any accepting site</div>
+              </div>
+              <div class="tnode dest ket dim" id="destKet" data-tip="Kettleman Hills — friable-permitted facility. 35251 Old Skyline Rd, Kettleman City 93239." style="left:1440px;top:300px;width:184px;height:104px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
                 <div class="st">Kettleman Hills</div><div class="ss">35251 Old Skyline Rd</div>
                 <a class="dlink" tabindex="-1" href="https://www.google.com/maps/search/?api=1&amp;query=35251+Old+Skyline+Road+Kettleman+City+CA+93239" target="_blank" rel="noopener">Directions ↗</a>
               </div>
-              <div class="tnode dest simi dim" id="destSimi" style="left:1260px;top:420px;width:220px;height:130px">
+              <div class="tnode dest simi dim" id="destSimi" data-tip="Simi Valley Landfill — accepts non-friable ACM. 2801 Madera Rd, Simi Valley 93065. Call ahead / pre-approval." style="left:1440px;top:500px;width:184px;height:104px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
                 <div class="st">Simi Valley</div><div class="ss">2801 Madera Rd · call ahead</div>
                 <a class="dlink" tabindex="-1" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">Directions ↗</a>
               </div>
 
-              <span class="tpill on-ok" id="pillDeb" style="left:960px;top:120px">PLAIN DOUBLE-BAG</span>
-              <span class="tpill off dim" id="pillNotice" style="left:840px;top:262px">AQMD NOTICE</span>
-              <span class="tpill on-alert dim" id="pillKetPack" style="left:1088px;top:271px">LABELS + MANIFEST</span>
-              <span class="tpill on-alert dim" id="pillKetWin" style="left:1088px;top:305px">⚑ 10-DAY WINDOW</span>
-              <span class="tpill on-alert dim" id="pillKetCount" style="left:1088px;top:339px">COUNT + WEIGH BAGS</span>
-              <span class="tpill on-warn dim" id="pillSimi" style="left:1098px;top:485px">NO MANIFEST · SEE 1529(k)</span>
+              <span class="tpill on-ok" id="pillDeb" data-tip="Plain double-bag poly — no asbestos labels, stickers, or manifest." style="left:1150px;top:122px">PLAIN DOUBLE-BAG</span>
+              <span class="tpill on-alert dim" id="pillKetPack" data-tip="Title 22 HW container marking + Cal/OSHA warning labels, and a uniform hazardous-waste manifest with California LDR certification." style="left:1345px;top:322px">LABELS + MANIFEST</span>
+              <span class="tpill on-alert dim" id="pillKetWin" data-tip="Kustom SOP: get it to Kettleman within 10 days of removal — tighter than the Title 22 accumulation window. Separate from the air-district notice." style="left:1345px;top:352px">⚑ 10-DAY WINDOW</span>
+              <span class="tpill on-alert dim" id="pillKetCount" data-tip="Count and weight-label every bag before it leaves — the manifest and the facility both need the tally." style="left:1345px;top:382px">COUNT + WEIGH BAGS</span>
+              <span class="tpill on-warn dim" id="pillSimi" data-tip="Non-friable is nonhazardous for disposal — no manifest. But check Cal/OSHA 1529(k) warning labels where the crew disturbs it." style="left:1345px;top:552px">NO MANIFEST · SEE 1529(k)</span>
             </div>
           </div>
           <div class="zoomhint">Pinch or Shift&nbsp;+&nbsp;scroll to zoom · drag to pan</div>
@@ -1032,13 +1075,13 @@
   const MAP_SIMI='https://www.google.com/maps/search/?api=1&query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065';
 
   const $=id=>document.getElementById(id);
-  const stageGate=$('stageGate'),gateSub=$('gateSub');
-  const cDeb=$('cDeb'),cShare=$('cShare'),cKet=$('cKet'),cDownN=$('cDownN');
-  const pkDeb=$('pkDeb'),pkShare=$('pkShare'),pkKet=$('pkKet'),pkDownN=$('pkDownN');
+  const nLe=$('nLe'),nGt=$('nGt'),nA1=$('nA1'),nA2=$('nA2'),nFri=$('nFri'),nNon=$('nNon');
+  const cUp=$('cUp'),cDown=$('cDown'),cDeb=$('cDeb'),cA1=$('cA1'),cA2=$('cA2'),cJ1=$('cJ1'),cJ2=$('cJ2'),cF=$('cF'),cN=$('cN'),cKet=$('cKet'),cSimi=$('cSimi');
+  const pkDeb=$('pkDeb'),pkKet=$('pkKet'),pkSimi=$('pkSimi');
   const destDeb=$('destDeb'),destKet=$('destKet'),destSimi=$('destSimi');
-  const pillDeb=$('pillDeb'),pillNotice=$('pillNotice'),pillKetPack=$('pillKetPack'),pillKetWin=$('pillKetWin'),pillKetCount=$('pillKetCount'),pillSimi=$('pillSimi');
+  const pillDeb=$('pillDeb'),pillKetPack=$('pillKetPack'),pillKetWin=$('pillKetWin'),pillKetCount=$('pillKetCount'),pillSimi=$('pillSimi');
   const setBranch=(el,grp,on)=>{el.setAttribute('class','conn '+grp+(on?' on flow':' dim'));};
-  const setPill=(el,cls,txt)=>{el.className='tpill '+cls;el.textContent=txt;};
+  const setNode=(el,on)=>{el.classList.toggle('dim',!on);el.classList.toggle('on',on);};
   const segArea=document.querySelector('.seg[data-group="area"]'),
         segFri=document.querySelector('.seg[data-group="friable"]');
   const ctrlArea=segArea.closest('.ctrl'),ctrlFri=segFri.closest('.ctrl');
@@ -1104,35 +1147,33 @@
     const reg=state.content==='over';
     const notify=state.area==='large';
     const fri=state.friable==='friable';
-    const aOn=!reg, fOn=reg&&fri, nOn=reg&&!fri;
+    const aOn=!reg;                      // ≤1% path
+    const a1On=reg&&!notify, a2On=reg&&notify;   // area fork
+    const fOn=reg&&fri, nOn=reg&&!fri;           // friability fork
 
-    // 1% gate
-    stageGate.classList.toggle('reg',reg);
-    gateSub.textContent=reg?'> 1% · regulated':'≤ 1% · not regulated';
+    // content fork
+    setNode(nLe,aOn); setNode(nGt,reg);
+    setBranch(cUp,'g-a',aOn);
+    setBranch(cDown,'g-share',reg);
 
-    // ≤1% branch (debris)
+    // ≤1% -> debris
     setBranch(cDeb,'g-a',aOn);pkDeb.classList.toggle('on',aOn);
-    destDeb.classList.toggle('on',aOn);destDeb.classList.toggle('dim',!aOn);
+    setNode(destDeb,aOn);
     pillDeb.classList.toggle('dim',!aOn);
 
-    // >1% shared trunk — the AQMD notice comes AFTER the % result
-    setBranch(cShare,'g-share',reg);
-    pkShare.classList.toggle('on',reg);
-    if(!reg){ setPill(pillNotice,'off AQMD','AQMD NOTICE');pillNotice.classList.add('dim'); }
-    else{
-      pillNotice.classList.remove('dim');
-      if(notify) setPill(pillNotice,fri?'on-alert':'on-warn','⚑ 10-DAY NOTICE');
-      else       setPill(pillNotice,'off','NOTICE EXEMPT · <100 FT²');
-    }
+    // >1% -> area fork (notification). Selected area card + its run to the junction light up.
+    setNode(nA1,a1On); setNode(nA2,a2On);
+    setBranch(cA1,'g-share',a1On); setBranch(cA2,'g-share',a2On);
+    setBranch(cJ1,'g-share',a1On); setBranch(cJ2,'g-share',a2On);
 
-    // friable branch (Kettleman)
+    // friability fork -> destinations
+    setNode(nFri,fOn); setNode(nNon,nOn);
+    setBranch(cF,'g-f',fOn); setBranch(cN,'g-n',nOn);
     setBranch(cKet,'g-f',fOn);pkKet.classList.toggle('on',fOn);
-    destKet.classList.toggle('on',fOn);destKet.classList.toggle('dim',!fOn);
+    setNode(destKet,fOn);
     pillKetPack.classList.toggle('dim',!fOn);pillKetWin.classList.toggle('dim',!fOn);pillKetCount.classList.toggle('dim',!fOn);
-
-    // non-friable branch (Simi)
-    setBranch(cDownN,'g-n',nOn);pkDownN.classList.toggle('on',nOn);
-    destSimi.classList.toggle('on',nOn);destSimi.classList.toggle('dim',!nOn);
+    setBranch(cSimi,'g-n',nOn);pkSimi.classList.toggle('on',nOn);
+    setNode(destSimi,nOn);
     pillSimi.classList.toggle('dim',!nOn);
 
     // Below the 1% line, area + friability are moot — grey them out.
@@ -1168,7 +1209,7 @@
   }));
 
   // ---- route map: pan + zoom (shift+scroll or drag on desktop, pinch + drag on touch) ----
-  const STAGE_W=1500, STAGE_H=560;
+  const STAGE_W=1640, STAGE_H=660;
   const topoVP=document.getElementById('topoViewport'), topoStage=document.getElementById('topo');
   let zScale=1, zTx=0, zTy=0, zMin=1, zMax=1.8;
   const EPS=1e-4;

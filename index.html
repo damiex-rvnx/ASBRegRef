@@ -415,6 +415,10 @@
   .conn.g-share.on{stroke:var(--accent)}
   .conn.g-f.on{stroke:var(--alert)}
   .conn.g-n.on{stroke:var(--warn)}
+  /* subordinate annotation tab (the notice branch off the >1% rail) */
+  .conn.sub{stroke-width:2;stroke-dasharray:2.5 6;animation:none}
+  .conn.sub.dim{opacity:.3;stroke:var(--line)}
+  .conn.sub.on{opacity:.8;stroke:var(--accent)}
 
   .pkt-c{opacity:0;transition:opacity .3s ease}
   .pkt-c.on{opacity:1;filter:url(#g)}
@@ -811,24 +815,24 @@
                 <path class="conn spine flow" id="pSpine2" d="M396,300 H452"/>
                 <!-- 1% gate -> content cards -->
                 <path class="conn g-a on flow" id="cUp" d="M570,300 H600 Q612,300 612,288 V161 Q612,149 624,149 H636"/>
-                <path class="conn g-share dim" id="cDown" d="M570,300 H600 Q612,300 612,312 V427 Q612,439 624,439 H636"/>
+                <path class="conn g-share dim" id="cDown" d="M570,300 H600 Q612,300 612,312 V423 Q612,435 624,435 H636"/>
                 <!-- ≤1% -> debris -->
                 <path class="conn g-a on flow" id="cDeb" d="M794,148 H1440"/>
-                <!-- >1% -> area fork -->
-                <path class="conn g-share dim" id="cA1" d="M794,439 H818 Q830,439 830,427 V348 Q830,336 842,336 H860"/>
-                <path class="conn g-share dim" id="cA2" d="M794,439 H818 Q830,439 830,451 V503 Q830,515 842,515 H860"/>
-                <!-- area cards -> friability junction (x=1060) -->
-                <path class="conn g-share dim" id="cJ1" d="M1020,336 H1048 Q1060,336 1060,348 V440"/>
-                <path class="conn g-share dim" id="cJ2" d="M1042,515 H1048 Q1060,515 1060,503 V440"/>
-                <!-- junction -> friability cards -->
-                <path class="conn g-f dim" id="cF" d="M1060,440 V364 Q1060,352 1072,352 H1082"/>
-                <path class="conn g-n dim" id="cN" d="M1060,440 V540 Q1060,552 1072,552 H1082"/>
+                <!-- >1% straight rail to the friability fork -->
+                <path class="conn g-share dim" id="cRail" d="M794,435 H1030"/>
+                <!-- area (notice) tabs off the rail — subordinate annotation -->
+                <path class="conn sub dim" id="cTab1" d="M890,435 V324"/>
+                <path class="conn sub dim" id="cTab2" d="M890,435 V500"/>
+                <!-- friability fork -> friable / non-friable -->
+                <path class="conn g-f dim" id="cF" d="M1030,435 V378 Q1030,366 1042,366 H1082"/>
+                <path class="conn g-n dim" id="cN" d="M1030,435 V536 Q1030,548 1042,548 H1082"/>
                 <!-- friability -> destinations -->
-                <path class="conn g-f dim" id="cKet" d="M1254,352 H1440"/>
-                <path class="conn g-n dim" id="cSimi" d="M1254,552 H1440"/>
+                <path class="conn g-f dim" id="cKet" d="M1254,366 H1440"/>
+                <path class="conn g-n dim" id="cSimi" d="M1254,548 H1440"/>
                 <!-- travelling packets -->
                 <circle class="pkt-c c-accent on" r="4.8"><animateMotion dur="1.7s" repeatCount="indefinite"><mpath href="#pSpine2"/></animateMotion></circle>
                 <circle class="pkt-c c-ok on" id="pkDeb" r="4.8"><animateMotion dur="3.0s" repeatCount="indefinite"><mpath href="#cDeb"/></animateMotion></circle>
+                <circle class="pkt-c c-accent" id="pkRail" r="4.8"><animateMotion dur="2.2s" repeatCount="indefinite"><mpath href="#cRail"/></animateMotion></circle>
                 <circle class="pkt-c c-alert" id="pkKet" r="4.8"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#cKet"/></animateMotion></circle>
                 <circle class="pkt-c c-warn" id="pkSimi" r="4.8"><animateMotion dur="2.6s" repeatCount="indefinite"><mpath href="#cSimi"/></animateMotion></circle>
               </svg>
@@ -850,23 +854,23 @@
               <div class="tnode card c-ok" id="nLe" data-tip="At or below 1% it is not regulated ACM — the area and friability questions no longer apply, and it disposes as ordinary construction debris. Caution: anything over 0.1% is still ACCM, so Cal/OSHA worker-protection rules apply even though the air district doesn't." style="left:636px;top:114px;width:158px;height:70px">
                 <div class="st">≤ 1%</div><div class="ss">not regulated</div>
               </div>
-              <div class="tnode card c-accent" id="nGt" data-tip="Over 1% is regulated ACM: full Cal/OSHA controls and asbestos disposal. Now the area and friability questions apply." style="left:636px;top:404px;width:158px;height:70px">
+              <div class="tnode card c-accent" id="nGt" data-tip="Over 1% is regulated ACM: full Cal/OSHA controls and asbestos disposal. Now the area and friability questions apply." style="left:636px;top:400px;width:158px;height:70px">
                 <div class="st">&gt; 1%</div><div class="ss">regulated ACM</div>
               </div>
 
               <!-- area fork (notification) -->
-              <div class="tnode card c-ok" id="nA1" data-tip="Under 100 ft² / 100 linear ft — exempt from advance air-district notification. Handling and disposal still apply in full." style="left:860px;top:300px;width:160px;height:72px">
+              <div class="tnode card c-ok" id="nA1" data-tip="Under 100 ft² / 100 linear ft — exempt from advance air-district notification. Handling and disposal still apply in full." style="left:806px;top:250px;width:170px;height:74px">
                 <div class="st">&lt; 100 ft²</div><div class="ss">notice exempt</div>
               </div>
-              <div class="tnode card c-alert" id="nA2" data-tip="100 ft² / 100 linear ft or more — file advance notification 10 working days before work starts. It goes to the air district with jurisdiction over the job site, which is why this guide carries three district panels (SCAQMD · AVAQMD · VCAPCD). Rule 1403 / Rule 62.7." style="left:860px;top:472px;width:182px;height:86px">
+              <div class="tnode card c-alert" id="nA2" data-tip="100 ft² / 100 linear ft or more — file advance notification 10 working days before work starts. It goes to the air district with jurisdiction over the job site, which is why this guide carries three district panels (SCAQMD · AVAQMD · VCAPCD). Rule 1403 / Rule 62.7." style="left:800px;top:500px;width:182px;height:82px">
                 <div class="st">≥ 100 ft²</div><div class="ss">10 working days · air-district notice</div>
               </div>
 
               <!-- friability fork (disposal) -->
-              <div class="tnode card c-alert" id="nFri" data-tip="Crumbles by hand. Friable &gt; 1% is Title 22 hazardous waste → Kettleman, with labels, a manifest, and a registered hauler over 50 lb." style="left:1082px;top:316px;width:172px;height:72px">
+              <div class="tnode card c-alert" id="nFri" data-tip="Crumbles by hand. Friable &gt; 1% is Title 22 hazardous waste → Kettleman, with labels, a manifest, and a registered hauler over 50 lb." style="left:1082px;top:330px;width:172px;height:72px">
                 <div class="st">Friable</div><div class="ss">Title 22 HW</div>
               </div>
-              <div class="tnode card c-warn" id="nNon" data-tip="Intact / bonded. Non-friable is nonhazardous for disposal → Simi. No manifest — but Cal/OSHA labels can still apply where the crew disturbs it." style="left:1082px;top:516px;width:172px;height:72px">
+              <div class="tnode card c-warn" id="nNon" data-tip="Intact / bonded. Non-friable is nonhazardous for disposal → Simi. No manifest — but Cal/OSHA labels can still apply where the crew disturbs it." style="left:1082px;top:512px;width:172px;height:72px">
                 <div class="st">Non-friable</div><div class="ss">nonhazardous</div>
               </div>
 
@@ -875,12 +879,12 @@
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V5.4A1.4 1.4 0 0 1 10.9 4h2.2a1.4 1.4 0 0 1 1.4 1.4V7M6.5 7l.9 12.2a1.5 1.5 0 0 0 1.5 1.4h6.2a1.5 1.5 0 0 0 1.5-1.4L18.5 7"/><path d="M10.5 11v6M13.5 11v6"/></svg></span>
                 <div class="st">Debris landfill</div><div class="ss">any accepting site</div>
               </div>
-              <div class="tnode dest ket dim" id="destKet" data-tip="Kettleman Hills — friable-permitted facility. 35251 Old Skyline Rd, Kettleman City 93239." style="left:1440px;top:300px;width:184px;height:104px">
+              <div class="tnode dest ket dim" id="destKet" data-tip="Kettleman Hills — friable-permitted facility. 35251 Old Skyline Rd, Kettleman City 93239." style="left:1440px;top:314px;width:184px;height:104px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
                 <div class="st">Kettleman Hills</div><div class="ss">35251 Old Skyline Rd</div>
                 <a class="dlink" tabindex="-1" href="https://www.google.com/maps/search/?api=1&amp;query=35251+Old+Skyline+Road+Kettleman+City+CA+93239" target="_blank" rel="noopener">Directions ↗</a>
               </div>
-              <div class="tnode dest simi dim" id="destSimi" data-tip="Simi Valley Landfill — accepts non-friable ACM. 2801 Madera Rd, Simi Valley 93065. Call ahead / pre-approval." style="left:1440px;top:500px;width:184px;height:104px">
+              <div class="tnode dest simi dim" id="destSimi" data-tip="Simi Valley Landfill — accepts non-friable ACM. 2801 Madera Rd, Simi Valley 93065. Call ahead / pre-approval." style="left:1440px;top:496px;width:184px;height:104px">
                 <span class="sic"><svg viewBox="0 0 24 24"><path d="M12 21s6.5-6 6.5-10.5A6.5 6.5 0 0 0 5.5 10.5C5.5 15 12 21 12 21z"/><circle cx="12" cy="10.3" r="2.4"/></svg></span>
                 <div class="st">Simi Valley</div><div class="ss">2801 Madera Rd · call ahead</div>
                 <a class="dlink" tabindex="-1" href="https://www.google.com/maps/search/?api=1&amp;query=Simi+Valley+Landfill+2801+Madera+Road+Simi+Valley+CA+93065" target="_blank" rel="noopener">Directions ↗</a>
@@ -1108,8 +1112,9 @@
 
   const $=id=>document.getElementById(id);
   const nLe=$('nLe'),nGt=$('nGt'),nA1=$('nA1'),nA2=$('nA2'),nFri=$('nFri'),nNon=$('nNon');
-  const cUp=$('cUp'),cDown=$('cDown'),cDeb=$('cDeb'),cA1=$('cA1'),cA2=$('cA2'),cJ1=$('cJ1'),cJ2=$('cJ2'),cF=$('cF'),cN=$('cN'),cKet=$('cKet'),cSimi=$('cSimi');
-  const pkDeb=$('pkDeb'),pkKet=$('pkKet'),pkSimi=$('pkSimi');
+  const cUp=$('cUp'),cDown=$('cDown'),cDeb=$('cDeb'),cRail=$('cRail'),cTab1=$('cTab1'),cTab2=$('cTab2'),cF=$('cF'),cN=$('cN'),cKet=$('cKet'),cSimi=$('cSimi');
+  const pkDeb=$('pkDeb'),pkRail=$('pkRail'),pkKet=$('pkKet'),pkSimi=$('pkSimi');
+  const setTab=(el,on)=>{el.setAttribute('class','conn sub'+(on?' on':' dim'));};
   const destDeb=$('destDeb'),destKet=$('destKet'),destSimi=$('destSimi');
   const pillDeb=$('pillDeb'),pillAccm=$('pillAccm'),pillKetPack=$('pillKetPack'),pillKetWin=$('pillKetWin'),pillKetCount=$('pillKetCount'),pillSimi=$('pillSimi');
   const setBranch=(el,grp,on)=>{el.setAttribute('class','conn '+grp+(on?' on flow':' dim'));};
@@ -1194,10 +1199,11 @@
     pillDeb.classList.toggle('dim',!aOn);
     pillAccm.classList.toggle('dim',!aOn);
 
-    // >1% -> area fork (notification). Selected area card + its run to the junction light up.
+    // >1% straight rail carries the regulated flow; the area (notice) tab is a
+    // subordinate branch off it — the selected one lights.
+    setBranch(cRail,'g-share',reg); pkRail.classList.toggle('on',reg);
     setNode(nA1,a1On); setNode(nA2,a2On);
-    setBranch(cA1,'g-share',a1On); setBranch(cA2,'g-share',a2On);
-    setBranch(cJ1,'g-share',a1On); setBranch(cJ2,'g-share',a2On);
+    setTab(cTab1,a1On); setTab(cTab2,a2On);
 
     // friability fork -> destinations
     setNode(nFri,fOn); setNode(nNon,nOn);

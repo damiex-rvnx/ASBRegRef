@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Asbestos Threshold &amp; Disposal Guide — Kustom Ventura Division</title>
-<meta name="theme-color" content="#0b0f14">
+<meta name="theme-color" content="#0a0a0b">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -36,33 +36,36 @@
   }
   :root{
     /* surfaces — stepped so layers read distinctly */
-    --bg:#0b0f14;
-    --surface-1:#131a22;
-    --surface-2:#1a232d;
-    --surface-3:#222d39;
-    --line:#2e3b49;
-    --line-bright:#3d4d5e;
+    /* neutral blacks, matched to the SITREP field-ops app */
+    --bg:#0a0a0b;
+    --surface-1:#141416;
+    --surface-2:#1a1a1d;
+    --surface-3:#232327;
+    --line:#2a2a2f;
+    --line-bright:#3a3a41;
 
     /* text — all checked for contrast on dark surfaces */
-    --text:#eef3f8;
-    --text-2:#b8c6d4;
-    --text-3:#8698a9;
+    --text:#f2f2f3;
+    --text-2:#b6b6bd;
+    --text-3:#8b8b94;
 
-    /* status — bright variants for dark bg legibility */
-    --ok:#3ddc84;
-    --ok-dim:#12301f;
-    --ok-line:#1f6b40;
-    --warn:#ffb340;
-    --warn-dim:#33240a;
-    --warn-line:#8a6114;
-    --alert:#ff6b5a;
-    --alert-dim:#33150f;
-    --alert-line:#8a3226;
+    /* status — SITREP's green / amber / red */
+    --ok:#74b863;
+    --ok-dim:#14200f;
+    --ok-line:#2f4d26;
+    --warn:#e9a53e;
+    --warn-dim:#2a1f0d;
+    --warn-line:#6b4d18;
+    --alert:#ec4f53;
+    --alert-dim:#2a1213;
+    --alert-line:#6e2629;
 
-    --accent:#4dd4f7;
-    --accent-dim:#0d2a33;
+    /* blue = active / interactive; brand red = the SITREP mark + name accent */
+    --accent:#4fa3ee;
+    --accent-dim:#10233a;
+    --brand:#ef5f5a;
 
-    --r:14px;
+    --r:20px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -588,6 +591,74 @@
   .drop[open]>summary{border-bottom:1px solid var(--line)}
   .drop-body{padding:24px 24px 26px}
 
+  /* ---------- SITREP visual match ----------
+     Restyles only — no layout, flow, or route-map structure changes. Mirrors the
+     SITREP field-ops app: neutral blacks, 20px cards, white-pill selected states,
+     tinted status chips, a red-square brand mark, mono uppercase labels. */
+  ::selection{background:var(--accent);color:#fff}
+  .glow{display:none}
+  header{background:var(--bg);border-bottom:0;padding-bottom:28px}
+  .eyebrow{color:var(--text-3);letter-spacing:.26em;align-items:flex-start}
+  .eyebrow::before{width:12px;height:12px;border-radius:3px;background:var(--brand);box-shadow:none;animation:none;flex-shrink:0;margin-top:1px}
+  header h1 em{color:var(--brand)}
+  .badge{border-radius:999px;padding:7px 13px;background:var(--surface-1)}
+  .sec-label{color:var(--text-3);letter-spacing:.24em}
+  .sec-label::before{width:8px;height:8px;border-radius:2px;background:var(--brand)}
+
+  .gate{border-left:1px solid var(--line);padding:28px 30px}
+  .gate .mark{color:var(--accent);text-shadow:none}
+
+  .tool{border-radius:24px}
+  .ctrl{border-radius:18px;background:var(--surface-2)}
+  .seg button{border-radius:14px;background:var(--surface-1);border-color:var(--line)}
+  .seg button:hover{border-color:var(--line-bright);transform:none}
+  .seg button[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:#0a0a0b;box-shadow:none}
+  .seg button[aria-pressed="true"] .tag{color:#4a4a52}
+
+  .viewtabs{border-radius:999px;background:var(--surface-1)}
+  .viewtabs button{border-radius:999px}
+  .viewtabs button[aria-selected="true"]{background:var(--text);color:#0a0a0b;border-color:var(--text)}
+  .tabs button{border-radius:999px;background:var(--surface-1)}
+  .tabs button[aria-selected="true"]{background:var(--text);color:#0a0a0b;border-color:var(--text)}
+  .cardbtn,.expandbtn{border-radius:14px;background:var(--surface-1)}
+  .mapbtn{border-radius:999px}
+
+  .readout{background:var(--surface-1)}
+  .verdict{border-radius:18px}
+  .verdict.ok,.verdict.warn,.verdict.alert{background:var(--surface-2)}
+  .chip{border-radius:8px;border:1px solid}
+  .chip.ok{background:var(--ok-dim);color:var(--ok);border-color:var(--ok-line)}
+  .chip.warn{background:var(--warn-dim);color:var(--warn);border-color:var(--warn-line)}
+  .chip.alert{background:var(--alert-dim);color:var(--alert);border-color:var(--alert-line)}
+
+  .district,.dcard,.fr-card{border-radius:var(--r)}
+  .fact{border-radius:16px}
+  .fact:hover{transform:none}
+  .fact .big{font-family:'Inter',system-ui,sans-serif;font-weight:600;color:var(--text);letter-spacing:-.025em}
+  .d-rule{border-radius:8px}
+  .d-link{border-radius:10px;border-color:transparent}
+  .d-link:hover{border-color:var(--accent);transform:none}
+  .fr-card .cap{letter-spacing:.2em}
+  .fr-card li::before{border-radius:2px;background:var(--text-3)}
+  .fr-card.a li::before{background:var(--alert)}
+  .flip,.flag{border-radius:16px}
+
+  /* disposal routes: SITREP stat-card style — colored square + mono label, no top bar */
+  .dcard.reg,.dcard.free,.dcard.nonfri{border-top:1px solid var(--line)}
+  .dcard .trig{display:flex;align-items:center;gap:9px;letter-spacing:.16em}
+  .dcard .trig::before{content:"";width:9px;height:9px;border-radius:2px;flex-shrink:0;background:currentColor}
+  .dcard li::before{border-radius:7px}
+
+  /* route map: softer cards, tinted status pills like SITREP's chips */
+  .topo{border-radius:20px;background:var(--bg)}
+  .tnode{border-radius:16px}
+  .tnode.dest{border-radius:18px}
+  .tpill{border-radius:8px}
+  .tpill.on-alert{background:var(--alert-dim);color:var(--alert);border-color:var(--alert-line)}
+  .tpill.on-warn{background:var(--warn-dim);color:var(--warn);border-color:var(--warn-line)}
+  .tpill.on-ok{background:var(--ok-dim);color:var(--ok);border-color:var(--ok-line)}
+  .topotip{border-radius:14px;background:var(--surface-2)}
+
   @media(prefers-reduced-motion:reduce){
     .rise,.district{animation:none;opacity:1;transform:none}
     .eyebrow::before{animation:none}
@@ -611,7 +682,7 @@
       --ok:#1f8a4c;--ok-dim:#eaf8f0;--ok-line:#1f8a4c;
       --warn:#8a5a00;--warn-dim:#fbf1dd;--warn-line:#b98a2e;
       --alert:#b03123;--alert-dim:#fbe9e6;--alert-line:#c0574a;
-      --accent:#0a6c86;--accent-dim:#e7f5fa;
+      --accent:#0a6c86;--accent-dim:#e7f5fa;--brand:#c43c37;
       --r:9px;
     }
     html,body{background:#fff;color:var(--text);font-size:10px;padding-bottom:0}

@@ -1,7 +1,7 @@
 /* Service worker for the Asbestos Threshold & Disposal Guide.
    Cache-first with a network fallback. Small and dependency-free.
    Bump CACHE_VERSION to force clients to fetch a fresh copy. */
-const CACHE_VERSION = 'asbregref-v2';
+const CACHE_VERSION = 'asbregref-v3';
 
 /* Files to precache on install. Missing entries are tolerated (allSettled)
    so a single 404 never breaks the install. */

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Asbestos Threshold &amp; Disposal Guide — Kustom Ventura Division</title>
 <meta name="theme-color" content="#0a0a0b">
 <link rel="manifest" href="manifest.webmanifest">
@@ -66,6 +66,8 @@
     --brand:#ef5f5a;
 
     --r:20px;
+    --content:1180px;  /* reading/content column; widens on ultrawide */
+    --rail:92px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -95,7 +97,7 @@
     border-bottom:1px solid var(--line);
     background:linear-gradient(180deg, var(--surface-1) 0%, var(--bg) 100%);
   }
-  .wrap{max-width:1060px;margin:0 auto}
+  .wrap{max-width:var(--content);margin:0 auto}
   .eyebrow{
     font-family:'JetBrains Mono',monospace;
     font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;
@@ -122,7 +124,7 @@
   }
 
   /* ---------- layout ---------- */
-  main{max-width:1060px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+  main{max-width:var(--content);margin:0 auto;padding:0 24px;position:relative;z-index:1}
   section{margin-top:56px}
   .sec-label{
     font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.2em;
@@ -352,7 +354,7 @@
   .flag strong{color:var(--warn);font-weight:700}
 
   footer{
-    max-width:1060px;margin:64px auto 0;padding:28px 24px;
+    max-width:var(--content);margin:64px auto 0;padding:28px 24px;
     border-top:1px solid var(--line);
   }
   footer p{
@@ -659,6 +661,120 @@
   .tpill.on-ok{background:var(--ok-dim);color:var(--ok);border-color:var(--ok-line)}
   .topotip{border-radius:14px;background:var(--surface-2)}
 
+  /* ---------- SITREP app layout: nav, header, at-a-glance, breakpoints ----------
+     phone  < 768   bottom tab bar, single column, swipeable stat cards
+     tablet 768–1023 bottom tab bar (thumb reach on iPad), 2×2 stat cards
+     desktop ≥1024  labelled icon rail, one content column
+     ultrawide ≥1600 rail + map and readout side by side, all three districts */
+  .skip{position:absolute;left:12px;top:-60px;z-index:2100;padding:10px 16px;border-radius:12px;
+    background:var(--text);color:#0a0a0b;font-weight:600;text-decoration:none}
+  .skip:focus{top:12px}
+  section{scroll-margin-top:24px}
+
+  .appnav{
+    position:fixed;z-index:900;left:50%;transform:translateX(-50%);
+    bottom:calc(12px + env(safe-area-inset-bottom));width:min(560px,calc(100% - 24px));
+    display:flex;align-items:stretch;gap:4px;padding:6px;
+    background:color-mix(in srgb,var(--surface-1) 90%,transparent);
+    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+    border:1px solid var(--line-bright);border-radius:26px;
+    box-shadow:0 18px 40px -18px rgba(0,0,0,.8);
+  }
+  .an-brand,.an-status{display:none}
+  .an-item{
+    flex:1 1 0;min-width:0;min-height:54px;border-radius:20px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    color:var(--text-3);text-decoration:none;font-size:10.5px;font-weight:600;letter-spacing:.01em;
+    transition:background .16s ease,color .16s ease;
+  }
+  .an-item svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .an-item:hover{color:var(--text)}
+  .an-item:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .an-item[aria-current="true"]{background:var(--text);color:#0a0a0b}
+  body{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
+
+  /* header: greeting + title left, mono date/context right (SITREP) */
+  header{padding:40px 24px 28px}
+  .htop{display:flex;justify-content:space-between;align-items:flex-start;gap:20px 32px;flex-wrap:wrap}
+  .hmain{min-width:0;flex:1 1 520px}
+  .greet{font-size:clamp(18px,2.2vw,26px);color:var(--text-2);font-weight:500;letter-spacing:-.01em;margin-bottom:6px}
+  header h1{max-width:20ch}
+  .hmeta{display:flex;flex-direction:column;align-items:flex-end;gap:12px;padding-top:6px;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:var(--text-3);text-align:right}
+  .hmeta span{white-space:nowrap}
+  .hmeta > span:first-child{color:var(--text-2)}
+  header .wrap{max-width:calc(var(--content) - 48px)}
+
+  /* at-a-glance stat cards */
+  .glance{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
+  .stat{background:var(--surface-2);border:1px solid var(--line);border-radius:18px;padding:16px 18px 17px;min-width:0;--tone:var(--text-3)}
+  .stat.t-ok{--tone:var(--ok)} .stat.t-warn{--tone:var(--warn)} .stat.t-alert{--tone:var(--alert)} .stat.t-accent{--tone:var(--accent)}
+  .stat .sl{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--text-3)}
+  .stat .sq{width:9px;height:9px;border-radius:2px;background:var(--tone);flex-shrink:0}
+  .stat .sv{margin-top:10px;font-size:21px;font-weight:600;letter-spacing:-.02em;line-height:1.2;color:var(--text)}
+  .stat .ss{margin-top:5px;font-size:13px;line-height:1.4;color:var(--text-3)}
+
+  @media(max-width:1023px){
+    .glance{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
+  @media(max-width:767px){
+    header{padding:22px 18px 22px}
+    .hmeta{order:-1;width:100%;flex-direction:row;justify-content:space-between;align-items:center;padding-top:0;font-size:10.5px;letter-spacing:.18em}
+    .hm-long{display:none}
+    .gate{flex-direction:column;gap:10px;padding:22px 20px}
+    .badge{font-size:10px;padding:6px 11px}
+    main{padding:0 16px}
+    .tool-pad,.readout{padding:16px}
+    .viewbar{padding:16px 16px 0}
+    /* stat cards become a swipe row, like SITREP's stop cards */
+    .glance{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:14px -16px 0;padding:0 16px 4px;scrollbar-width:none}
+    .glance::-webkit-scrollbar{display:none}
+    .stat{flex:0 0 72%;scroll-snap-align:start}
+    /* pickers: flatten the nested cards and lay each pair side by side,
+       like SITREP's Onsite | Desk toggle — halves the scroll to the answer */
+    .controls{gap:18px}
+    .ctrl{background:none;border:0;padding:0;border-radius:0}
+    .ctrl .q{margin-bottom:10px}
+    .seg{flex-direction:row;gap:8px}
+    .seg button{flex:1 1 0;min-width:0;min-height:56px;padding:11px 13px}
+    .seg .tag{font-size:10px}
+  }
+
+  @media(min-width:1024px){
+    body{padding-left:var(--rail);padding-bottom:48px}
+    .appnav{
+      left:0;top:0;bottom:0;transform:none;width:var(--rail);
+      flex-direction:column;align-items:stretch;gap:6px;padding:18px 10px calc(16px + env(safe-area-inset-bottom));
+      background:var(--surface-1);border:0;border-right:1px solid var(--line);border-radius:0;box-shadow:none;
+      -webkit-backdrop-filter:none;backdrop-filter:none;
+    }
+    .an-brand{display:flex;flex-direction:column;align-items:center;gap:7px;margin-bottom:22px}
+    .an-mark{width:22px;height:22px;border-radius:6px;background:var(--brand)}
+    .an-name{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.24em;color:var(--text-3);padding-left:.24em}
+    .an-item{flex:0 0 auto;min-height:68px;border-radius:18px;font-size:11.5px}
+    .an-status{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:auto;padding-top:16px;border-top:1px solid var(--line)}
+    .an-time{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text);letter-spacing:.02em}
+    .an-net{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-3)}
+    .an-net i{width:7px;height:7px;border-radius:50%;background:var(--ok)}
+    .an-net.off i{background:var(--warn)}
+    .topo{height:540px}
+  }
+
+  @media(min-width:1600px){
+    :root{--content:1720px}
+    /* map and readout side by side — no toggling on a wide screen */
+    .viewtabs{display:none}
+    .readout{display:grid;grid-template-columns:minmax(0,1fr) minmax(420px,500px);gap:22px;align-items:start}
+    .topo{height:640px}
+    #panelRead{max-height:688px;overflow:auto;border-radius:18px}
+    /* all three districts at once */
+    #districts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));column-gap:18px;align-items:start}
+    #districts > :not(.district){grid-column:1/-1}
+    #districts .tabs{display:none}
+    #districts .district[hidden]{display:block}
+    #districts .district{padding:24px;animation:none}
+  }
+
   @media(prefers-reduced-motion:reduce){
     .rise,.district{animation:none;opacity:1;transform:none}
     .eyebrow::before{animation:none}
@@ -686,7 +802,8 @@
       --r:9px;
     }
     html,body{background:#fff;color:var(--text);font-size:10px;padding-bottom:0}
-    .glow,.offline-bar,.tabs,.chev,.drop-head .chev,header .sub,header .badge-row{display:none}
+    .glow,.offline-bar,.tabs,.chev,.drop-head .chev,header .sub,header .badge-row,.appnav,.skip,.greet,.glance{display:none}
+    body{padding-left:0}
     header{padding:0 0 10px;border:0;background:none}
     header h1{font-size:24px}
     section:has(.tool){display:none} /* hide only the interactive tool; keep gate + friable split */
@@ -790,10 +907,33 @@
 <div class="offline-bar" id="offlineBar" role="status" aria-live="polite" hidden>⚠ Offline — showing the cached copy. It may not reflect current rule text.</div>
 <div class="glow"></div>
 
+<a class="skip" href="#route">Skip to the decision tool</a>
+
+<!-- App navigation: a labelled icon rail on desktop, a floating bottom tab bar on
+     phones and tablets (thumb reach). Same links either way; scroll-spy marks
+     the section you're in with aria-current. -->
+<nav class="appnav" aria-label="Sections">
+  <div class="an-brand" aria-hidden="true"><span class="an-mark"></span><span class="an-name">ASB</span></div>
+  <a class="an-item" href="#gate"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.5 20.5 12 12 20.5 3.5 12z"/></svg><span>Gate</span></a>
+  <a class="an-item" href="#route"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="5.5" r="2.2"/><circle cx="18" cy="19.5" r="2.2"/><path d="M8.2 5.5H14a3.5 3.5 0 0 1 0 7h-4a3.5 3.5 0 0 0 0 7h5.8"/></svg><span>Route</span></a>
+  <a class="an-item" href="#districts"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 3.5 6v14L9 18l6 2 5.5-2V4L15 6 9 4zM9 4v14M15 6v14"/></svg><span>Districts</span></a>
+  <a class="an-item" href="#friable"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3.5 8.5 4.5-8.5 4.5L3.5 8z"/><path d="m3.5 12 8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/></svg><span>Friable</span></a>
+  <a class="an-item" href="#disposal"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h11v9H3zM14 9.5h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg><span>Disposal</span></a>
+  <div class="an-status"><span class="an-time" id="navTime">--:--</span><span class="an-net" id="navNet"><i aria-hidden="true"></i><span id="navNetT">Online</span></span></div>
+</nav>
+
 <header>
   <div class="wrap">
-    <div class="eyebrow">Field Reference · Asbestos &amp; Lead</div>
-    <h1>Threshold &amp; <em>Disposal</em> Decision Guide</h1>
+    <div class="htop">
+      <div class="hmain">
+        <p class="greet" id="greet">Good morning,</p>
+        <h1>Threshold &amp; <em>Disposal</em> Decision Guide</h1>
+      </div>
+      <div class="hmeta">
+        <span id="hDate">Field reference</span>
+        <span><span class="hm-long">Asbestos &amp; lead · </span>field ops</span>
+      </div>
+    </div>
     <p class="sub">Set the three variables that decide every job — content, area, friability — and read exactly what kicks in, from notification through the landfill gate.</p>
     <div class="badge-row">
       <span class="badge">Kustom Ventura Division</span>
@@ -805,7 +945,7 @@
 
 <main>
 
-  <section class="rise">
+  <section id="gate" class="rise">
     <div class="sec-label">Start here</div>
     <h2>The 1% gate controls the disposal path</h2>
     <p class="sec-sub">The 1% line decides regulated ACM, air-district notification, and how the waste is classified. It does <em>not</em> decide worker protection — Cal/OSHA starts far lower, at 0.1%.</p>
@@ -815,10 +955,10 @@
     </div>
   </section>
 
-  <section class="rise" style="animation-delay:.07s">
+  <section id="route" class="rise" style="animation-delay:.07s">
     <div class="sec-label">Interactive</div>
     <h2>Set the job, read the path</h2>
-    <p class="sec-sub">Tap each variable — the route map and readout both update live. Switch between them below.</p>
+    <p class="sec-sub">Tap each variable — the route map, the at-a-glance cards, and the readout all update live.</p>
 
     <div class="tool">
       <div class="tool-pad">
@@ -849,6 +989,15 @@
             </div>
             <div class="na">N/A at ≤ 1% — no disposal split below the line</div>
           </div>
+        </div>
+
+        <!-- At a glance: the answer to the three variables, SITREP stat-card style.
+             The full text equivalent is the Readout; this is the summary. -->
+        <div class="glance" id="glance" aria-label="This job at a glance" role="group">
+          <div class="stat" id="gRoute"><div class="sl"><span class="sq" aria-hidden="true"></span>Route</div><div class="sv"></div><div class="ss"></div></div>
+          <div class="stat" id="gNotice"><div class="sl"><span class="sq" aria-hidden="true"></span>District notice</div><div class="sv"></div><div class="ss"></div></div>
+          <div class="stat" id="gWaste"><div class="sl"><span class="sq" aria-hidden="true"></span>Waste class</div><div class="sv"></div><div class="ss"></div></div>
+          <div class="stat" id="gClock"><div class="sl"><span class="sq" aria-hidden="true"></span>Disposal clock</div><div class="sv"></div><div class="ss"></div></div>
         </div>
       </div>
 
@@ -996,7 +1145,7 @@
     </div>
   </section>
 
-  <section class="rise" style="animation-delay:.14s">
+  <section id="districts" class="rise" style="animation-delay:.14s">
     <div class="sec-label">By air district</div>
     <h2>Where you work</h2>
     <p class="sec-sub">The 1% and 100 ft² logic is consistent across all three. What changes is the form and who you file with.</p>
@@ -1046,7 +1195,7 @@
     </div>
   </section>
 
-  <section class="rise" style="animation-delay:.18s">
+  <section id="friable" class="rise" style="animation-delay:.18s">
    <details class="drop">
     <summary>
       <div class="drop-head">
@@ -1095,7 +1244,7 @@
    </details>
   </section>
 
-  <section class="rise" style="animation-delay:.22s">
+  <section id="disposal" class="rise" style="animation-delay:.22s">
    <details class="drop">
     <summary>
       <div class="drop-head">
@@ -1248,7 +1397,28 @@
     chip.textContent=chipText;vTitle.textContent=title;vLede.textContent=lede;
     vRows.innerHTML=rows.map(r=>`<div class="row"><span class="k">${r[0]}</span><span class="v">${r[1]}</span></div>`).join('');
     vWarn.hidden=reg; // Cal/OSHA 0.1% caution shows on the ≤1% route
+    updateGlance();
     updateRoadmap();
+  }
+
+  // At-a-glance stat cards — the same answers as the Readout, in four words each.
+  function setStat(id,tone,value,sub){
+    const el=$(id); el.className='stat t-'+tone;
+    el.querySelector('.sv').textContent=value; el.querySelector('.ss').textContent=sub;
+  }
+  function updateGlance(){
+    const reg=state.content==='over', notify=state.area==='large', fri=state.friable==='friable';
+    if(!reg){
+      setStat('gRoute','ok','Debris landfill','any site that accepts it');
+      setStat('gNotice','none','None','1% gate decides — not regulated');
+      setStat('gWaste','warn','Plain debris','over 0.1% is still ACCM for Cal/OSHA');
+      setStat('gClock','none','None','no Kustom disposal window');
+      return;
+    }
+    setStat('gRoute',fri?'alert':'warn',fri?'Kettleman Hills':'Simi Valley',fri?'friable-permitted facility':'non-friable ACM · call ahead');
+    setStat('gNotice',notify?'alert':'ok',notify?'10 working days':'Exempt',notify?'advance notice to the air district':'under 100 ft² / 100 linear ft');
+    setStat('gWaste',fri?'alert':'warn',fri?'Title 22 HW':'Nonhazardous',fri?'labels · manifest · registered hauler':'no manifest · check 1529(k) labels');
+    setStat('gClock',fri?'alert':'none',fri?'10 days':'None',fri?'Kustom SOP · removal to Kettleman':'no Kustom disposal window');
   }
 
   function updateRoadmap(){
@@ -1594,6 +1764,19 @@
   window.addEventListener('resize',()=>{ hideTip(); if(!panelMap.hidden) relayout(); });
   fitMap();
 
+  // ---- ultrawide: map and readout side by side, so neither panel is hidden ----
+  const wideMQ=matchMedia('(min-width:1600px)');
+  function applyWide(){
+    if(wideMQ.matches){ panelMap.hidden=false; panelRead.hidden=false; }
+    else{
+      const map=document.querySelector('.viewtabs [aria-selected="true"]').dataset.view==='map';
+      panelMap.hidden=!map; panelRead.hidden=map;
+    }
+    if(!panelMap.hidden) requestAnimationFrame(relayout);
+  }
+  wideMQ.addEventListener('change',applyWide);
+  applyWide();
+
   // ---- fullscreen expand for the whole interactive tool ----
   const tool=document.querySelector('.tool'), expandBtn=document.getElementById('expandBtn');
   expandBtn.addEventListener('click',()=>{
@@ -1631,10 +1814,39 @@
 
   // ---- offline indicator ----
   const offlineBar=document.getElementById('offlineBar');
-  const updateOnline=()=>{ offlineBar.hidden = navigator.onLine !== false; };
+  const navNet=document.getElementById('navNet'), navNetT=document.getElementById('navNetT');
+  const updateOnline=()=>{
+    const off = navigator.onLine === false;
+    offlineBar.hidden = !off;
+    navNet.classList.toggle('off',off); navNetT.textContent = off ? 'Offline' : 'Online';
+  };
   window.addEventListener('online',updateOnline);
   window.addEventListener('offline',updateOnline);
   updateOnline();
+
+  // ---- header greeting, date, and rail clock (SITREP) ----
+  const greetEl=document.getElementById('greet'), hDate=document.getElementById('hDate'), navTime=document.getElementById('navTime');
+  function tick(){
+    const d=new Date(), h=d.getHours();
+    greetEl.textContent = h<12 ? 'Good morning,' : h<17 ? 'Good afternoon,' : 'Good evening,';
+    hDate.textContent = d.toLocaleDateString('en-US',{weekday:'long'})+' · '+d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    navTime.textContent = d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+  }
+  tick(); setInterval(tick,30000);
+
+  // ---- section nav: scroll-spy + open a collapsed section when you jump to it ----
+  const navLinks=[...document.querySelectorAll('.appnav .an-item')];
+  navLinks.forEach(a=>a.addEventListener('click',()=>{
+    const d=document.querySelector(a.hash)?.querySelector('details'); if(d) d.open=true;
+  }));
+  if('IntersectionObserver' in window){
+    const spy=new IntersectionObserver(entries=>{
+      entries.forEach(en=>{ if(!en.isIntersecting) return;
+        navLinks.forEach(a=>{ if(a.hash==='#'+en.target.id) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current'); });
+      });
+    },{rootMargin:'-35% 0px -60% 0px'});
+    navLinks.forEach(a=>{ const t=document.querySelector(a.hash); if(t) spy.observe(t); });
+  }
 
   // ---- service worker registration (feature-checked, failure-safe) ----
   if('serviceWorker' in navigator){
